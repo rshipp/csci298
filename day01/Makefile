@@ -1,0 +1,2 @@
+
+sampleC : sampleC.c
