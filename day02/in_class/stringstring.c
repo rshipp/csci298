@@ -1,23 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 
-int main()
+int main( int argc, char* argv[] )
 {
-    char aChar = '=', anotherChar = '\n';
-
-    puts( "My name is mud" );
-
-    // a string in C is simply an array of chars
-    char mud[] = "My name is mud";
-    puts( mud );
-
-    printf( "The string is %lu bytes long /%s/.\n", strlen(mud), mud );
-
-    mud[11] = '\0';
-    printf( "The string is %lu bytes long /%s/.\n", strlen(mud), mud );
-
-    mud[11] = 'M';
-    printf( "The string is %lu bytes long /%s/.\n", strlen(mud), mud );
+    int i;
+    for( i=0; i<argc; i++ ) {
+        printf( "Arg %d value /%s/\n", i, argv[i] );
+    }
 
     return 0;
 }
