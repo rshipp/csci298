@@ -5,8 +5,8 @@ int main( int argc, char* argv[] )
 {
     int i;
 
-#if 0
     char* breadcrumb;
+#if 0
     for( i=0; i<argc; i++ ) {
         char* theArg = argv[i];
         char* token;
