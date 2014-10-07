@@ -8,9 +8,11 @@ int main( int argc, char* argv[] )
     char* breadcrumb;
     for( i=0; i<argc; i++ ) {
         char* theArg = argv[i];
-        char* token = strtok_r( theArg, " \t", &breadcrumb );
-        if( token ) {
+        char* token;
+
+        while( (token = strtok_r( theArg, " \t", &breadcrumb )) ) {
             printf( "The next token is '%s'\n", token );
+            theArg = NULL;
         }
     }
 
