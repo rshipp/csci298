@@ -4,8 +4,14 @@
 int main( int argc, char* argv[] )
 {
     int i;
+
+    char* breadcrumb;
     for( i=0; i<argc; i++ ) {
-        printf( "Arg %d value /%s/\n", i, argv[i] );
+        char* theArg = argv[i];
+        char* token = strtok_r( theArg, " \t", &breadcrumb );
+        if( token ) {
+            printf( "The next token is '%s'\n", token );
+        }
     }
 
     return 0;
