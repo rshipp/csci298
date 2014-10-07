@@ -1,0 +1,4 @@
+Use strtok_r, strtok has a bug when using it in multithreaded
+applications.
+
+strtok tokenizes a string by replacing a given delimiter with null.
