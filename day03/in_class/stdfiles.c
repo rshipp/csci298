@@ -6,8 +6,8 @@ int main( int argc, char* argv[] )
     int i;
 
     for( i=0; i<argc; i++ ) {
-        fprintf( stderr, argv[i] );
-        fprintf( stderr, "\n" );
+        fputs( argv[i], stderr );
+        fputs( "\n", stderr );
     }
 
     return 0;
