@@ -5,7 +5,7 @@ int main(int argc, char* argv[])
     int i;
     for (i=1; i<argc; ++i)
     {
-        if (i % 2 == 0)
+        if (i % 2)
         {
             fputs(argv[i], stderr);
             fputs("\n", stderr);
