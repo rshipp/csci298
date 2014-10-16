@@ -2,19 +2,21 @@
 
 int main(int argc, char* argv[])
 {
+    FILE* fp = stdout;
     int i;
     for (i=1; i<argc; ++i)
     {
+        fprintf(fp, ">> fd %d << ", fileno(fp));
+        fputs(argv[i], fp);
+        fputs("\n", fp);
+
         if (i % 2)
         {
-            printf(">> fd %d << ", fileno(stdout));
-            puts(argv[i]);
+            fp = stderr;
         }
         else
         {
-            fprintf(stderr, ">> fd %d << ", fileno(stderr));
-            fputs(argv[i], stderr);
-            fputs("\n", stderr);
+            fp = stdout;
         }
     }
     
