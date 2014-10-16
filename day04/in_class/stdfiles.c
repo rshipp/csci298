@@ -7,12 +7,12 @@ int main(int argc, char* argv[])
     {
         if (i % 2)
         {
-            fputs(argv[i], stderr);
-            fputs("\n", stderr);
+            puts(argv[i]);
         }
         else
         {
-            puts(argv[i]);
+            fputs(argv[i], stderr);
+            fputs("\n", stderr);
         }
     }
     
