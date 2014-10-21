@@ -1,0 +1,34 @@
+Here are a (reasonably short?) list of small exercises for you to
+work on for tomorrows lecture.  I realize that this is short notice,
+this work won't be checked or graded, but you will probably get the most
+out of lecture tomorrow with at least some of it considered.
+
+1. Confirm the attached wordat.c works, use the /usr/share/dict/words 
+   file and xxd on alamode:
+
+     $ xxd /usr/share/dict/words |more
+	 $ wordat /usr/share/dict/words 7
+
+2. Try wordat with an offset argument that is 20 bytes too big (if the  
+   dictionary is 10000 bytes, try 10020.  Does wordat work?
+
+3. Try with an offset that is 100MB too large ...  do you perceive
+   a difference in execution time?    Confirm your opinion with the 
+   time(1) command [1]
+
+     $ time ./wordat /usr/share/dict/words 938900
+     $ time ./wordat /usr/share/dict/words 100938900
+
+Hmmm. So it would seem that wordat is flawed, and not only flawed its
+run time performance of two invocations that should cause the same error
+condition on the same data file vary drastically.
+
+4. Now read the fgets(3) man page, paying particular attention to the 
+RETURN VALUE portion of the documentation.  Fix wordat so that it not
+only works correctly when give inconsistent arguments, but it also 
+has the same run time performance characteristics under the same error
+condidtions.
+
+[1] time(1) is a common syntax in the land of Unix for manual section
+    1 documentation for time.
+
