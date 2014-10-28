@@ -9,13 +9,13 @@ int main(int argc, char* argv[])
     if (!fp) {
         fputs("Error opening file.\n", stderr);
     }
-    float* data = malloc(sizeof(float)*SIZE);
+    double* data = malloc(sizeof(double)*SIZE);
     if (!data) {
         fputs("Error allocating memory.\n", stderr);
     }
 
     for (int i=0; i<SIZE; i++) {
-        if (fscanf(fp, "%f\n", &data[i]) != 1) {
+        if (fscanf(fp, "%lf\n", &data[i]) != 1) {
             break;
         }
     }
