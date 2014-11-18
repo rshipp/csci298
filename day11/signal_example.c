@@ -24,10 +24,18 @@ int main()
 
 	install_handler( SIGUSR1 );
 	install_handler( SIGHUP );
+	install_handler( SIGALRM );
+	install_handler( SIGINT );
+	install_handler( SIGTERM );
+	install_handler( SIGCONT );
 
 	do {
 		fputs( "pausing for signal delivery...\n", stdout );
 		fflush( stdout );
+
+        alarm(7);
+        pause();
+
 		printf( "%u seconds remaining in sleep() call\n", sleep(7) );
 		print_signal_history( stdout );
 		fputs( "\n", stdout );
