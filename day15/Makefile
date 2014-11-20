@@ -10,7 +10,7 @@ all: ${SOLIBS}
 
 libattachable_debugger.so: attachable_debugger.o
 
-${SOLIBS}: lib%.so : %.o :
+${SOLIBS}: lib%.so : %.o
 	${LD} ${SOFLAGS} -o $(@F) $^ ${SHLIBS} 
 
 clean: 
