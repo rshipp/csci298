@@ -8,7 +8,7 @@ ${SOLIBS}: CFLAGS += -fPIC
 
 all: ${SOLIBS} 
 
-libattachable_debugger.so: attachable_debugger.o
+libattachable_debugger.so: attachable_debugger.o libctor.o
 
 ${SOLIBS}: lib%.so : %.o
 	${LD} ${SOFLAGS} -o $(@F) $^ ${SHLIBS} 
