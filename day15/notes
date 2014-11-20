@@ -1,0 +1,9 @@
+## gdb
+
+### gdb and curses
+
+attach pid: (in another term)
+b: break (set breakpoint)
+cont: continue (into code)
+print var: prints var
+n: next
