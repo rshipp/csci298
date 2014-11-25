@@ -2,8 +2,8 @@
 struct Reservation {
     char room[50];
     char description[128];
-    int start;
-    int end;
+    time_t start;
+    time_t end;
 };
 
 char** readrooms(FILE* fp);
