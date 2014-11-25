@@ -124,25 +124,25 @@ struct Reservation* readreservation(FILE* fp) {
     return r;
 }
 
-struct Reservation* writereservation(FILE* fp, struct Reservation* r) {
+int writereservation(FILE* fp, struct Reservation* r) {
     if(!fputs(r->room, fp)) {
         fputs("Error writing data\n", stderr);
-        return NULL;
+        return 0;
     }
     if(!fputs(r->description, fp)) {
         fputs("Error writing data\n", stderr);
-        return NULL;
+        return 0;
     }
     if (fwrite(&r->start, sizeof(r->start), 1, fp) != 1) {
         fputs("Error writing data\n", stderr);
-        return NULL;
+        return 0;
     }
     if (fwrite(&r->end, sizeof(r->end), 1, fp) != 1) {
         fputs("Error writing data\n", stderr);
-        return NULL;
+        return 0;
     }
 
-    return r;
+    return 1;
 }
 
 struct Reservation** readsched(FILE* fp) {

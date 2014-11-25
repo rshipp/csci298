@@ -8,5 +8,5 @@ struct Reservation {
 
 char** readrooms(FILE* fp);
 struct Reservation* readreservation(FILE* fp);
-struct Reservation* writereservation(FILE* fp, struct Reservation* r);
+int writereservation(FILE* fp, struct Reservation* r);
 struct Reservation** readsched(FILE* fp);
