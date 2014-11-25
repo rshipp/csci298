@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
     }
     FILE* schedfile = fopen(argv[2], "r");
     if (!schedfile) {
-        fprintf(stderr, "Error opening file '%s' for writing\n", argv[2]);
+        fprintf(stderr, "Error opening file '%s' for reading\n", argv[2]);
         return 1;
     }
 
