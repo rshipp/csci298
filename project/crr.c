@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
         fprintf(stderr, "Error opening file '%s' for reading\n", argv[1]);
         return 1;
     }
-    FILE* schedfile = fopen(argv[2], "w");
+    FILE* schedfile = fopen(argv[2], "r");
     if (!schedfile) {
         fprintf(stderr, "Error opening file '%s' for writing\n", argv[2]);
         return 1;
@@ -82,20 +82,24 @@ char** readrooms(FILE* fp) {
 }
 
 struct Reservation* readreservation(FILE* fp) {
-    struct Reservation* r;
-    if (fread(r->room, sizeof(r->room), 1, fp) != 1) {
+    struct Reservation* r = malloc(sizeof(struct Reservation));
+    if (!r) {
+        fputs("Error allocating memory\n", stderr);
+        return NULL;
+    }
+    if(!fgets(r->room, sizeof(r->room), fp)) {
         fputs("Error reading data\n", stderr);
         return NULL;
     }
-    if (fread(r->description, sizeof(r->description), 1, fp) != 1) {
+    if(!fgets(r->description, sizeof(r->description), fp)) {
         fputs("Error reading data\n", stderr);
         return NULL;
     }
-    if (fread(r->start, sizeof(r->start), 1, fp) != 1) {
+    if (fread(&r->start, sizeof(r->start), 1, fp) != 1) {
         fputs("Error reading data\n", stderr);
         return NULL;
     }
-    if (fread(r->end, sizeof(r->end), 1, fp) != 1) {
+    if (fread(&r->end, sizeof(r->end), 1, fp) != 1) {
         fputs("Error reading data\n", stderr);
         return NULL;
     }
@@ -103,6 +107,31 @@ struct Reservation* readreservation(FILE* fp) {
     return r;
 }
 
+struct Reservation* writereservation(FILE* fp) {
+    struct Reservation* r = malloc(sizeof(struct Reservation));
+    if (!r) {
+        fputs("Error allocating memory\n", stderr);
+        return NULL;
+    }
+    if(!fputs(r->room, fp)) {
+        fputs("Error writing data\n", stderr);
+        return NULL;
+    }
+    if(!fputs(r->description, fp)) {
+        fputs("Error writing data\n", stderr);
+        return NULL;
+    }
+    if (fwrite(&r->start, sizeof(r->start), 1, fp) != 1) {
+        fputs("Error writing data\n", stderr);
+        return NULL;
+    }
+    if (fwrite(&r->end, sizeof(r->end), 1, fp) != 1) {
+        fputs("Error writing data\n", stderr);
+        return NULL;
+    }
+
+    return r;
+}
 
 struct Reservation** readsched(FILE* fp) {
     struct Reservation** sched = malloc(sizeof(struct Reservation*)*BUFSIZE);
