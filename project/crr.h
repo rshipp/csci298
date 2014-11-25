@@ -1,0 +1,2 @@
+
+char** readrooms(FILE* fp);

@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <strings.h>
 
+#include "crr.h"
+
 #define BUFSIZE 1024
 #define MAXROOMLEN 50
 
@@ -24,33 +26,45 @@ int main(int argc, char* argv[])
     }
 
     /* Read in rooms data. */
+    char** rooms = readrooms(roomsfile);
+    if (!rooms) {
+        return 1;
+    }
+
+    /* Read in schedule data, if it exists. */
+
+
+    return 0;
+}
+
+char** readrooms(FILE* fp) {
     char** rooms = malloc(sizeof(char*)*BUFSIZE);
     if (!rooms) {
         fputs("Error allocating memory\n", stderr);
-        return 1;
+        return NULL;
     }
     int n;
     for (n=0; n<BUFSIZE; n++) {
         rooms[n] = malloc(sizeof(char)*MAXROOMLEN);
         if (!rooms[n]) {
             fputs("Error allocating memory\n", stderr);
-            return 1;
+            return NULL;
         }
     }
     int r = 1, i = 0;
-    while (fgets(rooms[i], MAXROOMLEN, roomsfile)) {
+    while (fgets(rooms[i], MAXROOMLEN, fp)) {
         if (i>=BUFSIZE-1) {
             r++;
             rooms = realloc(rooms, sizeof(char*)*BUFSIZE*r);
             if (!rooms) {
                 fputs("Error allocating memory\n", stderr);
-                return 1;
+                return NULL;
             }
             for (n=BUFSIZE*(r-1); n<BUFSIZE*r; n++) {
                 rooms[n] = malloc(sizeof(char)*MAXROOMLEN);
                 if (!rooms[n]) {
                     fputs("Error allocating memory\n", stderr);
-                    return 1;
+                    return NULL;
                 }
             }
         }
@@ -59,4 +73,6 @@ int main(int argc, char* argv[])
             ++i;
         }
     }
+
+    return rooms;
 }
