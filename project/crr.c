@@ -41,7 +41,6 @@ int main(int argc, char* argv[])
     while (fgets(rooms[i], MAXROOMLEN, roomsfile)) {
         if (i>=BUFSIZE-1) {
             r++;
-            // FIXME: realloc
             rooms = realloc(rooms, sizeof(char*)*BUFSIZE*r);
             if (!rooms) {
                 fputs("Error allocating memory\n", stderr);
