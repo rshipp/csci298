@@ -32,6 +32,10 @@ int main(int argc, char* argv[])
     }
 
     /* Read in schedule data, if it exists. */
+    struct Reservation** sched = readsched(schedfile);
+    if (!sched) {
+        return 1;
+    }
 
 
     return 0;
@@ -75,4 +79,67 @@ char** readrooms(FILE* fp) {
     }
 
     return rooms;
+}
+
+struct Reservation* readreservation(FILE* fp) {
+    struct Reservation* r;
+    if (fread(r->room, sizeof(r->room), 1, fp) != 1) {
+        fputs("Error reading data\n", stderr);
+        return NULL;
+    }
+    if (fread(r->description, sizeof(r->description), 1, fp) != 1) {
+        fputs("Error reading data\n", stderr);
+        return NULL;
+    }
+    if (fread(r->start, sizeof(r->start), 1, fp) != 1) {
+        fputs("Error reading data\n", stderr);
+        return NULL;
+    }
+    if (fread(r->end, sizeof(r->end), 1, fp) != 1) {
+        fputs("Error reading data\n", stderr);
+        return NULL;
+    }
+
+    return r;
+}
+
+
+struct Reservation** readsched(FILE* fp) {
+    struct Reservation** sched = malloc(sizeof(struct Reservation*)*BUFSIZE);
+    if (!sched) {
+        fputs("Error allocating memory\n", stderr);
+        return NULL;
+    }
+    int n;
+    for (n=0; n<BUFSIZE; n++) {
+        sched[n] = malloc(sizeof(struct Reservation)*MAXROOMLEN);
+        if (!sched[n]) {
+            fputs("Error allocating memory\n", stderr);
+            return NULL;
+        }
+    }
+    int r = 1, i = 0;
+    for (i=0; ; i++) {
+        sched[i] = readreservation(fp);
+        if (!sched[i]) {
+            return NULL;
+        }
+        if (i>=(BUFSIZE-1)*r) {
+            r++;
+            sched = realloc(sched, sizeof(struct Reservation*)*BUFSIZE*r);
+            if (!sched) {
+                fputs("Error allocating memory\n", stderr);
+                return NULL;
+            }
+            for (n=BUFSIZE*(r-1); n<BUFSIZE*r; n++) {
+                sched[n] = malloc(sizeof(struct Reservation)*MAXROOMLEN);
+                if (!sched[n]) {
+                    fputs("Error allocating memory\n", stderr);
+                    return NULL;
+                }
+            }
+        }
+    }
+
+    return sched;
 }
