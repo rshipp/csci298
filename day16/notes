@@ -1,1 +1,4 @@
 logging with daemons: signalfd, poll
+
+project 2 should start with daymonx.c.
+
