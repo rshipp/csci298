@@ -24,13 +24,39 @@ int main(int argc, char* argv[])
     }
 
     /* Read in rooms data. */
-    char room[MAXROOMLEN];
-    char (* rooms)[MAXROOMLEN] = malloc(sizeof(room)*BUFSIZE);
-    int i = 0;
-    while (fgets(room[i], MAXROOMLEN, roomsfile)) {
-        if (strcmp(room[i], "\n")) {
-            //rooms[i] = room;
-            printf("%s", room[i]);
+    char** rooms = malloc(sizeof(char*)*BUFSIZE);
+    if (!rooms) {
+        fputs("Error allocating memory\n", stderr);
+        return 1;
+    }
+    int n;
+    for (n=0; n<BUFSIZE; n++) {
+        rooms[n] = malloc(sizeof(char)*MAXROOMLEN);
+        if (!rooms[n]) {
+            fputs("Error allocating memory\n", stderr);
+            return 1;
+        }
+    }
+    int r = 1, i = 0;
+    while (fgets(rooms[i], MAXROOMLEN, roomsfile)) {
+        if (i>=BUFSIZE-1) {
+            r++;
+            // FIXME: realloc
+            rooms = realloc(rooms, sizeof(char*)*BUFSIZE*r);
+            if (!rooms) {
+                fputs("Error allocating memory\n", stderr);
+                return 1;
+            }
+            for (n=BUFSIZE*(r-1); n<BUFSIZE*r; n++) {
+                rooms[n] = malloc(sizeof(char)*MAXROOMLEN);
+                if (!rooms[n]) {
+                    fputs("Error allocating memory\n", stderr);
+                    return 1;
+                }
+            }
+        }
+        if (strcmp(rooms[i], "\n")) {
+            //printf("%s", rooms[i]);
             ++i;
         }
     }
