@@ -12,6 +12,7 @@
 #include "reservations.h"
 #include "rooms.h"
 
+int sched_modified = 0;
 
 /* Main */
 

@@ -119,6 +119,7 @@ void* nr_desc_handler(char** rooms, int roomslen, struct Reservation*** sched, i
     strncpy((*partial)->description, line, sizeof((*partial)->description));
     (*sched)[*schedlen] = *partial;
     (*schedlen)++;
+    sched_modified = 1;
     writeline(window, winheight, &d, buf, "The room has been reserved.");
     writeline(window, winheight, &d, buf, "Press Enter to return to the main menu.");
 

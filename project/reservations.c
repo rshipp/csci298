@@ -136,6 +136,7 @@ int readsched(FILE* fp, struct Reservation*** sched) {
         }
     }
 
+    sched_modified = 1;
     /* Return length of array. */
     return i;
 }
