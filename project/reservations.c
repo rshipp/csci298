@@ -232,3 +232,21 @@ int reservations_for_day(time_t time, struct Reservation** sched, int schedlen, 
 
     return n;
 }
+
+int reservations_search(char* needle, struct Reservation** sched, int schedlen, struct Reservation*** reservations) {
+    *reservations = malloc(sizeof(struct Reservation*)*schedlen);
+    if (!(*reservations)) {
+        fputs("Error allocating memory\n", stderr);
+        return 0;
+    }
+
+    int i, n = 0;
+    for (i=0; i<schedlen; i++) {
+        if (strcasestr(sched[i]->description, needle)) {
+            (*reservations)[n] = sched[i];
+            ++n;
+        }
+    }
+
+    return n;
+}
