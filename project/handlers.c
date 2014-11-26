@@ -1,15 +1,16 @@
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #include "crr.h"
 #include "crrses.h"
 #include "handlers.h"
 
-void* end_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line) {
+void* end_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, struct Reservation** partial, WINDOW* window, int winheight, char* line) {
     return NULL;
 }
 
-void* newreservation_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line) {
+void* newreservation_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, struct Reservation** partial, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);
@@ -35,22 +36,50 @@ void* newreservation_handler(char** rooms, int roomslen, struct Reservation** sc
         writeline(window, winheight, &d, buf, available[i]);
     }
 
-    return end_handler;
+    writeline(window, winheight, &d, buf, "");
+    writeline(window, winheight, &d, buf, "Choose a room.");
+
+    return nr_pickaroom_handler;
 }
 
-void* dayview_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line) {
+void* nr_pickaroom_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, struct Reservation** partial, WINDOW* window, int winheight, char* line) {
+    char buf[BUFSIZE];
+    int d = 0;
+    cleardisplay(window);
+
+    int i;
+    for (i=0; i<roomslen; i++) {
+        if (!strcmp(strcat(line, "\n"), rooms[i])) {
+            strncpy((*partial)->room, line, sizeof((*partial)->room));
+            writelinef(window, winheight, &d, buf, "Reserving %s", line);
+            writeline(window, winheight, &d, buf, "Enter a starting time in YYYY-MM-DD HH:MM:SS format.");
+            return nr_start_handler;
+        }
+    }
+
+    writelinef(window, winheight, &d, buf, "'%s'", line);
+    writelinef(window, winheight, &d, buf, "'%s'", rooms[i]);
+    writeline(window, winheight, &d, buf, "Invalid room. Try again.");
+    return nr_pickaroom_handler;
+}
+
+void* nr_start_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, struct Reservation** partial, WINDOW* window, int winheight, char* line) {
     return NULL;
 }
 
-void* roomview_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line) {
+void* dayview_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, struct Reservation** partial, WINDOW* window, int winheight, char* line) {
     return NULL;
 }
 
-void* search_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line) {
+void* roomview_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, struct Reservation** partial, WINDOW* window, int winheight, char* line) {
     return NULL;
 }
 
-void* main_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line) {
+void* search_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, struct Reservation** partial, WINDOW* window, int winheight, char* line) {
+    return NULL;
+}
+
+void* main_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, struct Reservation** partial, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);

@@ -7,6 +7,15 @@
 
 /* Reservations */
 
+struct Reservation* makeemptyreservation() {
+    struct Reservation* reservation = malloc(sizeof(struct Reservation));
+    strncpy(reservation->room, "", sizeof(reservation->room));
+    strncpy(reservation->description, "", sizeof(reservation->description));
+    reservation->start = 0;
+    reservation->end = 0;
+    return reservation;
+}
+
 struct Reservation* makereservation(char* room, char* description, time_t start, time_t end) {
     struct Reservation* reservation = malloc(sizeof(struct Reservation));
     strncpy(reservation->room, room, sizeof(reservation->room));
