@@ -5,11 +5,11 @@
 #include "crrses.h"
 #include "handlers.h"
 
-void* end_handler(WINDOW* window, int winheight, char* line) {
+void* end_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line) {
     return NULL;
 }
 
-void* newreservation_handler(WINDOW* window, int winheight, char* line) {
+void* newreservation_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);
@@ -23,22 +23,34 @@ void* newreservation_handler(WINDOW* window, int winheight, char* line) {
     time_t time = mktime(t);
 
     writelinef(window, winheight, &d, buf, "Rooms available on %s", ctime(&time));
+
+    char** available;
+    int numavailable = rooms_available(rooms, roomslen, sched, schedlen, time, &available);
+    if (!numavailable) {
+        writeline(window, winheight, &d, buf, "None");
+        return newreservation_handler;
+    }
+    int i;
+    for (i=0; i<numavailable; i++) {
+        writeline(window, winheight, &d, buf, available[i]);
+    }
+
     return end_handler;
 }
 
-void* dayview_handler(WINDOW* window, int winheight, char* line) {
+void* dayview_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line) {
     return NULL;
 }
 
-void* roomview_handler(WINDOW* window, int winheight, char* line) {
+void* roomview_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line) {
     return NULL;
 }
 
-void* search_handler(WINDOW* window, int winheight, char* line) {
+void* search_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line) {
     return NULL;
 }
 
-void* main_handler(WINDOW* window, int winheight, char* line) {
+void* main_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);

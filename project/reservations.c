@@ -172,6 +172,11 @@ int rooms_available(char** rooms, int roomslen, struct Reservation** sched, int 
     int i, n = 0;
     for (i=0; i<roomslen; i++) {
         if (room_available(rooms[i], sched, schedlen, time)) {
+            (*available)[n] = malloc(MAXROOMLEN);
+            if (!(*available)[n]) {
+                fputs("Error allocating memory\n", stderr);
+                return 0;
+            }
             strncpy((*available)[n], rooms[i], MAXROOMLEN);
             ++n;
         }

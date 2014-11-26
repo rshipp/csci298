@@ -3,11 +3,13 @@
 
 #include <ncurses.h>
 
-void* end_handler(WINDOW* window, int winheight, char* line);
-void* newreservation_handler(WINDOW* window, int winheight, char* line);
-void* dayview_handler(WINDOW* window, int winheight, char* line);
-void* roomview_handler(WINDOW* window, int winheight, char* line);
-void* search_handler(WINDOW* window, int winheight, char* line);
-void* main_handler(WINDOW* window, int winheight, char* line);
+#include "reservations.h"
+
+void* end_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line);
+void* newreservation_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line);
+void* dayview_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line);
+void* roomview_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line);
+void* search_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line);
+void* main_handler(char** rooms, int roomslen, struct Reservation** sched, int schedlen, WINDOW* window, int winheight, char* line);
 
 #endif
