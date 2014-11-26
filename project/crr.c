@@ -89,6 +89,13 @@ int size_display( WINDOW* display, WINDOW* edit )
 	return parent_y - 4 - edit_size;
 }
 
+void writeline(WINDOW* window, int winheight, int* c, char* buf, char* line) {
+    snprintf( buf, BUFSIZE, "%s", line );
+    mvwprintw( window, (*c)++ + 2, 2, buf );
+    *c = *c % winheight;
+    wrefresh(window);
+}
+
 /* Main */
 
 int main(int argc, char* argv[])
@@ -156,6 +163,9 @@ int main(int argc, char* argv[])
 	char buf[BUFSIZE];
     char line[BUFSIZE];
     int ch;
+
+    writeline(display, dispheight, &d, buf, "What would you like to do?");
+
 	while((ch = getch()) != KEY_ESC) {
 		switch (ch) {
 			case KEY_RESIZE:
@@ -173,10 +183,7 @@ int main(int argc, char* argv[])
                 } else if ( ch == KEY_LF || ch == KEY_ENTER ) {
                     line[e] = '\0';
                     e = 0;
-                    snprintf( buf, BUFSIZE, "%s", line );
-                    mvwprintw( display, d++ + 2, 2, buf );
-                    d = d % dispheight;
-					wrefresh(display);
+                    writeline(display, dispheight, &d, buf, line);
                     wclear(edit);
 	                draw_borders(edit, HORZ2, VERT2, CORNER);
 	                mvwprintw(edit, 0, 3, EDIT_TITLE);
