@@ -95,3 +95,25 @@ int readsched(FILE* fp, struct Reservation*** sched) {
     return i;
 }
 
+
+
+/*
+room_available(room, time) {
+    qsort
+    if (time < room->start || time >= room->end) {
+        return ;
+    } else {
+        return ;
+    }
+}
+
+
+rooms_available(rooms, roomslen, time) {
+    int i;
+    for (i=0; i<roomslen; i++) {
+        if (rooms[i]->start) {
+
+        }
+    }
+}
+*/

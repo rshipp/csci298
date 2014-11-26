@@ -4,6 +4,10 @@
 #include "crr.h"
 #include "rooms.h"
 
+static int compare_rooms(const void* roomx, const void* roomy) {
+    return strcmp(* (char * const *) roomx, * (char * const *) roomy);
+}
+
 int readrooms(FILE* fp, char*** rooms) {
     (*rooms) = malloc(sizeof(char*)*BUFSIZE);
     if (!(*rooms)) {
@@ -45,23 +49,3 @@ int readrooms(FILE* fp, char*** rooms) {
     return i;
 }
 
-/*
-room_available(room, time) {
-    qsort
-    if (time < room->start || time >= room->end) {
-        return ;
-    } else {
-        return ;
-    }
-}
-
-
-rooms_available(rooms, roomslen, time) {
-    int i;
-    for (i=0; i<roomslen; i++) {
-        if (rooms[i]->start) {
-
-        }
-    }
-}
-*/
