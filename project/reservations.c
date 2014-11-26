@@ -19,11 +19,18 @@ struct Reservation* makereservation(char* room, char* description, time_t start,
 static int compare_reservations(const void* reservationx, const void* reservationy) {
     int compare_room = strcmp((* (struct Reservation * const *) reservationx)->room, (* (struct Reservation * const *) reservationy)->room);
     if (!compare_room) {
-        int compare_start = (* (struct Reservation * const *) reservationx)->start - (* (struct Reservation * const *) reservationy)->start;
-        if (!compare_start) {
-            return (* (struct Reservation * const *) reservationx)->end - (* (struct Reservation * const *) reservationy)->end;
+        /* Rooms are the same.
+         * If ystart >= xend, x < y.
+         * If yend <= xstart, x > y.
+         * Else x==y and there is a conflict.
+         */
+
+        if ((* (struct Reservation * const *) reservationy)->start >= (* (struct Reservation * const *) reservationx)->end) {
+            return -1;
+        } else if ((* (struct Reservation * const *) reservationy)->end <= (* (struct Reservation * const *) reservationx)->start) {
+            return 1;
         } else {
-            return compare_start;
+            return 0;
         }
     } else {
         return compare_room;
