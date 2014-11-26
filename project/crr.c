@@ -139,11 +139,6 @@ int main(int argc, char* argv[])
         }
     }
 
-    int i;
-    for (i=0; i<roomslen; i++) {
-        printf("%s", rooms[i]);
-    }
-
     /* curses */
 	initscr();
 	noecho();
@@ -191,12 +186,7 @@ int main(int argc, char* argv[])
 					mvwprintw( edit, 1, e + 1, buf );
                     line[--e] = '\0';
 					wrefresh(edit);
-				} /*else {
-					snprintf( buf, BUFSIZE, "Unprintable %04x", ch );
-					mvwprintw( display, d++ + 2, 2, buf );
-					d = d % dispheight;
-					wrefresh(display);
-				}*/
+				}
 				break;
 		}
     }
@@ -333,9 +323,6 @@ int readsched(FILE* fp, struct Reservation*** sched) {
                 }
             }
         }
-    }
-    for (n=0; n<i; n++) {
-        printf("%s%s%s%s", (*sched)[n]->room, (*sched)[n]->description, ctime(&(*sched)[n]->start), ctime(&(*sched)[n]->end));
     }
 
     /* Return length of array. */
