@@ -195,3 +195,40 @@ int rooms_available(char** rooms, int roomslen, struct Reservation** sched, int 
     /* Return length of array. */
     return n;
 }
+
+int reservations_for_room(char* room, struct Reservation** sched, int schedlen, struct Reservation*** reservations) {
+    *reservations = malloc(sizeof(struct Reservation*)*schedlen);
+    if (!(*reservations)) {
+        fputs("Error allocating memory\n", stderr);
+        return 0;
+    }
+    int i, n = 0;
+    for (i=0; i<schedlen; i++) {
+        if (strcmp(room, sched[i]->room)) {
+            (*reservations)[n] = sched[i];
+            ++n;
+        }
+    }
+
+    return n;
+}
+
+int reservations_for_day(time_t time, struct Reservation** sched, int schedlen, struct Reservation*** reservations) {
+    *reservations = malloc(sizeof(struct Reservation*)*schedlen);
+    if (!(*reservations)) {
+        fputs("Error allocating memory\n", stderr);
+        return 0;
+    }
+
+    int day = time/(24*60*60);
+
+    int i, n = 0;
+    for (i=0; i<schedlen; i++) {
+        if (day == (sched[i]->start)/(24*60*60) || day == (sched[i]->end)/(24*60*60)) {
+            (*reservations)[n] = sched[i];
+            ++n;
+        }
+    }
+
+    return n;
+}
