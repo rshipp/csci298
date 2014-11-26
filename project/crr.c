@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 	char buf[BUFSIZE];
     char line[BUFSIZE];
     int ch;
-    void* (*inputhandler)(char**, int, struct Reservation**, int, struct Reservation**, WINDOW*, int, char*);
+    void* (*inputhandler)(char**, int, struct Reservation***, int, struct Reservation**, WINDOW*, int, char*);
     struct Reservation* partial = makeemptyreservation();
 
     writeline(display, dispheight, &d, buf, "Select an option:");
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
 	                mvwprintw(edit, 0, 3, EDIT_TITLE);
                     wrefresh(edit);
                     // Handle the input.
-                    inputhandler = inputhandler(rooms, roomslen, sched, schedlen, &partial, display, dispheight, line);
+                    inputhandler = inputhandler(rooms, roomslen, &sched, schedlen, &partial, display, dispheight, line);
                     if (!inputhandler) {
 	                    endwin();
                         return 1;
