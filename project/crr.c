@@ -12,9 +12,6 @@
 #include "reservations.h"
 #include "rooms.h"
 
-#define BUFSIZE 1024
-#define MAXROOMLEN 50
-
 
 /* Main */
 
