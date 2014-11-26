@@ -13,6 +13,7 @@ struct Reservation* makereservation(char* room, char* description, time_t start,
     strncpy(reservation->description, description, sizeof(reservation->description));
     reservation->start = start;
     reservation->end = end;
+    return reservation;
 }
 
 static int compare_reservations(const void* reservationx, const void* reservationy) {
