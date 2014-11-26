@@ -1,8 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "crr.h"
 #include "reservations.h"
+
+/* Reservations */
+
+
+static int compare_reservations(const void* reservationx, const void* reservationy) {
+    int compare_room = strcmp((* (struct Reservation * const *) reservationx)->room, (* (struct Reservation * const *) reservationy)->room);
+    if (!compare_room) {
+        int compare_start = (* (struct Reservation * const *) reservationx)->start - (* (struct Reservation * const *) reservationy)->start;
+        if (!compare_start) {
+            return (* (struct Reservation * const *) reservationx)->end - (* (struct Reservation * const *) reservationy)->end;
+        } else {
+            return compare_start;
+        }
+    } else {
+        return compare_room;
+    }
+}
 
 struct Reservation* readreservation(FILE* fp) {
     struct Reservation* r = malloc(sizeof(struct Reservation));
@@ -50,6 +68,9 @@ int writereservation(FILE* fp, struct Reservation* r) {
 
     return 1;
 }
+
+
+/* Schedules */
 
 int readsched(FILE* fp, struct Reservation*** sched) {
     (*sched) = malloc(sizeof(struct Reservation*)*BUFSIZE);
