@@ -148,23 +148,35 @@ int writesched(FILE* fp, struct Reservation** sched, int schedsize) {
 }
 
 
-/*
-room_available(room, time) {
-    qsort
-    if (time < room->start || time >= room->end) {
-        return ;
-    } else {
-        return ;
-    }
-}
-
-
-rooms_available(rooms, roomslen, time) {
+int room_available(char* room, struct Reservation** sched, int schedlen, time_t time) {
     int i;
-    for (i=0; i<roomslen; i++) {
-        if (rooms[i]->start) {
-
+    for (i=0; i<schedlen; i++) {
+        if (strcmp(room, sched[i]->room)) {
+            if (time < sched[i]->start || time >= sched[i]->end) {
+                continue;
+            } else {
+                return 0;
+            }
         }
     }
+    return 1;
 }
-*/
+
+
+int rooms_available(char** rooms, int roomslen, struct Reservation** sched, int schedlen, time_t time, char*** available) {
+    *available = malloc(sizeof(char*)*roomslen);
+    if (!(*available)) {
+        fputs("Error allocating memory\n", stderr);
+        return 0;
+    }
+    int i, n = 0;
+    for (i=0; i<roomslen; i++) {
+        if (room_available(rooms[i], sched, schedlen, time)) {
+            strncpy((*available)[n], rooms[i], MAXROOMLEN);
+            ++n;
+        }
+    }
+
+    /* Return length of array. */
+    return n;
+}
