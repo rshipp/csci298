@@ -7,6 +7,13 @@
 
 /* Reservations */
 
+struct Reservation* makereservation(char* room, char* description, time_t start, time_t end) {
+    struct Reservation* reservation = malloc(sizeof(struct Reservation));
+    strncpy(reservation->room, room, sizeof(reservation->room));
+    strncpy(reservation->description, description, sizeof(reservation->description));
+    reservation->start = start;
+    reservation->end = end;
+}
 
 static int compare_reservations(const void* reservationx, const void* reservationy) {
     int compare_room = strcmp((* (struct Reservation * const *) reservationx)->room, (* (struct Reservation * const *) reservationy)->room);

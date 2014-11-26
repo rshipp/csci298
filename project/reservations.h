@@ -11,6 +11,7 @@ struct Reservation {
     time_t end;
 };
 
+struct Reservation* makereservation(char* room, char* description, time_t start, time_t end);
 static int compare_reservations(const void* reservationx, const void* reservationy);
 struct Reservation* readreservation(FILE* fp);
 int writereservation(FILE* fp, struct Reservation* r);
