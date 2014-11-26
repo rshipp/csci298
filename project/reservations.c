@@ -22,7 +22,7 @@ static int compare_reservations(const void* reservationx, const void* reservatio
         /* Rooms are the same.
          * If ystart >= xend, x < y.
          * If yend <= xstart, x > y.
-         * Else x==y and there is a conflict.
+         * Else x overlaps y and there is a conflict.
          */
 
         if ((* (struct Reservation * const *) reservationy)->start >= (* (struct Reservation * const *) reservationx)->end) {
