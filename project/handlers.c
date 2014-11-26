@@ -127,14 +127,56 @@ void* nr_desc_handler(char** rooms, int roomslen, struct Reservation*** sched, i
 }
 
 void* dayview_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, WINDOW* window, int winheight, char* line) {
-    return NULL;
+    char buf[BUFSIZE];
+    int d = 0;
+    cleardisplay(window);
+
+    struct tm* t = malloc(sizeof(struct tm));
+    if (!strptime(line, "%F", t)) {
+        writeline(window, winheight, &d, buf, "Enter a date in the format: YYYY-MM-DD");
+        writeline(window, winheight, &d, buf, "Invalid date. Try again.");
+        return dayview_handler;
+    }
+    time_t time = mktime(t);
+
+    struct tm* date = localtime(&time);
+
+    writelinef(window, winheight, &d, buf, "Reservations on %s", line);
+
+    struct Reservation** reservations;
+    int numreservations = reservations_for_day(time, *sched, *schedlen, &reservations);
+    if (!numreservations) {
+        writeline(window, winheight, &d, buf, "None");
+        return dayview_handler;
+    }
+    int i;
+    for (i=0; i<numreservations; i++) {
+        snprintf( buf, BUFSIZE, "%d) %s", i, reservations[i]->room );
+        mvwprintw( window, d++ + 2, 2, buf );
+        d = d % winheight;
+        writelinef(window, winheight, &d, buf, "   %s", ctime(&reservations[i]->start));
+        writelinef(window, winheight, &d, buf, "   %s", ctime(&reservations[i]->end));
+    }
+
+    writeline(window, winheight, &d, buf, "");
+    writeline(window, winheight, &d, buf, "Choose a number to view or edit a reservation.");
+
+    return end_handler;
 }
 
 void* roomview_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, WINDOW* window, int winheight, char* line) {
+    char buf[BUFSIZE];
+    int d = 0;
+    cleardisplay(window);
+
     return NULL;
 }
 
 void* search_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, WINDOW* window, int winheight, char* line) {
+    char buf[BUFSIZE];
+    int d = 0;
+    cleardisplay(window);
+
     return NULL;
 }
 
@@ -147,6 +189,7 @@ void* main_handler(char** rooms, int roomslen, struct Reservation*** sched, int*
             writeline(window, winheight, &d, buf, "Enter a date and 24-hour time in the format: YYYY-MM-DD HH:MM:SS");
             return newreservation_handler;
         case (int)'2':
+            writeline(window, winheight, &d, buf, "Enter a date in the format: YYYY-MM-DD");
             return dayview_handler;
         case (int)'3':
             return roomview_handler;
