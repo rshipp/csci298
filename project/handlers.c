@@ -132,14 +132,16 @@ void* dayview_handler(char** rooms, int roomslen, struct Reservation*** sched, i
     cleardisplay(window);
 
     struct tm* t = malloc(sizeof(struct tm));
+    if (!t) {
+        fputs("Error allocating memory\n", stderr);
+        return NULL;
+    }
     if (!strptime(line, "%F", t)) {
         writeline(window, winheight, &d, buf, "Enter a date in the format: YYYY-MM-DD");
         writeline(window, winheight, &d, buf, "Invalid date. Try again.");
         return dayview_handler;
     }
     time_t time = mktime(t);
-
-    struct tm* date = localtime(&time);
 
     writelinef(window, winheight, &d, buf, "Reservations on %s", line);
 
@@ -154,14 +156,14 @@ void* dayview_handler(char** rooms, int roomslen, struct Reservation*** sched, i
         snprintf( buf, BUFSIZE, "%d) %s", i, reservations[i]->room );
         mvwprintw( window, d++ + 2, 2, buf );
         d = d % winheight;
-        writelinef(window, winheight, &d, buf, "   %s", ctime(&reservations[i]->start));
-        writelinef(window, winheight, &d, buf, "   %s", ctime(&reservations[i]->end));
+        writelinef(window, winheight, &d, buf, "   %s", ctime(&(reservations[i]->start)));
+        writelinef(window, winheight, &d, buf, "   %s", ctime(&(reservations[i]->end)));
     }
 
     writeline(window, winheight, &d, buf, "");
     writeline(window, winheight, &d, buf, "Choose a number to view or edit a reservation.");
 
-    return end_handler;
+    return main_handler;
 }
 
 void* roomview_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, WINDOW* window, int winheight, char* line) {
