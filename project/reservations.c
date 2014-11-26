@@ -116,6 +116,21 @@ int readsched(FILE* fp, struct Reservation*** sched) {
     return i;
 }
 
+int writesched(FILE* fp, struct Reservation** sched, int schedsize) {
+    if (fwrite(&schedsize, sizeof(int), 1, fp) != 1) {
+        fputs("Error writing data\n", stderr);
+        return 0;
+    }
+    int i;
+    for (i=0; i<schedsize; i++) {
+        if (!writereservation(fp, sched[i])) {
+            return 0;
+        }
+    }
+
+    /* Return reservations written. */
+    return i;
+}
 
 
 /*

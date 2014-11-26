@@ -16,6 +16,7 @@ struct Reservation* readreservation(FILE* fp);
 int writereservation(FILE* fp, struct Reservation* r);
 
 /* Schedules */
+int writesched(FILE* fp, struct Reservation** sched, int schedsize);
 int readsched(FILE* fp, struct Reservation*** sched);
 
 #endif
