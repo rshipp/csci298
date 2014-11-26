@@ -1,4 +1,4 @@
-CFLAGS=-g -D_GNU_SOURCE -std=c99
+CFLAGS=-g -D_GNU_SOURCE -std=c99 -lcurses
 
-crr: crr.c
-	$(CC) $(CFLAGS) crr.c -lcurses -o crr
+crr: crrses.c handlers.c reservations.c rooms.c crr.c
+

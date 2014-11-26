@@ -1,12 +1,10 @@
+#ifndef CRR_CRR
+#define CRR_CRR
 
-struct Reservation {
-    char room[50];
-    char description[128];
-    time_t start;
-    time_t end;
-};
+#include <time.h>
+#include <stdio.h>
 
-int readrooms(FILE* fp, char*** rooms);
-struct Reservation* readreservation(FILE* fp);
-int writereservation(FILE* fp, struct Reservation* r);
-int readsched(FILE* fp, struct Reservation*** sched);
+#define BUFSIZE 1024
+#define MAXROOMLEN 50
+
+#endif
