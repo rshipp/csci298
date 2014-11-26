@@ -69,6 +69,7 @@ void writelinef(WINDOW* window, int winheight, int* c, char* buf, char* format, 
     *c = *c % winheight;
     wrefresh(window);
 }
+
 void writeline(WINDOW* window, int winheight, int* c, char* buf, char* line) {
     writelinef(window, winheight, c, buf, "%s", line);
 }
