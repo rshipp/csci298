@@ -6,7 +6,7 @@ struct Reservation {
     time_t end;
 };
 
-char** readrooms(FILE* fp);
+int readrooms(FILE* fp, char*** rooms);
 struct Reservation* readreservation(FILE* fp);
 int writereservation(FILE* fp, struct Reservation* r);
-struct Reservation** readsched(FILE* fp);
+int readsched(FILE* fp, struct Reservation*** sched);

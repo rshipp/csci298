@@ -15,19 +15,14 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    /* Read in rooms data. */
     FILE* roomsfile = fopen(argv[1], "r");
     if (!roomsfile) {
         fprintf(stderr, "Error opening file '%s' for reading\n", argv[1]);
         return 1;
     }
-    FILE* schedfile = fopen(argv[2], "r");
-    if (!schedfile) {
-        fprintf(stderr, "Error opening file '%s' for reading\n", argv[2]);
-        return 1;
-    }
-
-    /* Read in rooms data. */
-    char** rooms = readrooms(roomsfile);
+    char** rooms;
+    int roomslen = readrooms(roomsfile, &rooms);
     if (!rooms) {
         return 1;
     }
@@ -51,52 +46,63 @@ int main(int argc, char* argv[])
 
 
     /* Read in schedule data, if it exists. */
-    struct Reservation** sched = readsched(schedfile);
-    if (!sched) {
-        return 1;
+    FILE* schedfile = fopen(argv[2], "r");
+    struct Reservation** sched;
+    int schedlen = 0;
+    if (schedfile) {
+        schedlen = readsched(schedfile, &sched);
+        if (!sched) {
+            return 1;
+        }
+    }
+
+    int i;
+    for (i=0; i<roomslen; i++) {
+        printf("%s", rooms[i]);
     }
 
     return 0;
 }
 
-char** readrooms(FILE* fp) {
-    char** rooms = malloc(sizeof(char*)*BUFSIZE);
-    if (!rooms) {
+int readrooms(FILE* fp, char*** rooms) {
+    (*rooms) = malloc(sizeof(char*)*BUFSIZE);
+    if (!(*rooms)) {
         fputs("Error allocating memory\n", stderr);
-        return NULL;
+        return 0;
     }
     int n;
     for (n=0; n<BUFSIZE; n++) {
-        rooms[n] = malloc(sizeof(char)*MAXROOMLEN);
-        if (!rooms[n]) {
+        (*rooms)[n] = malloc(sizeof(char)*MAXROOMLEN);
+        if (!(*rooms)[n]) {
             fputs("Error allocating memory\n", stderr);
-            return NULL;
+            return 0;
         }
     }
     int r = 1, i = 0;
-    while (fgets(rooms[i], MAXROOMLEN, fp)) {
+    while (fgets((*rooms)[i], MAXROOMLEN, fp)) {
         if (i>=BUFSIZE-1) {
             r++;
-            rooms = realloc(rooms, sizeof(char*)*BUFSIZE*r);
-            if (!rooms) {
+            (*rooms) = realloc((*rooms), sizeof(char*)*BUFSIZE*r);
+            if (!(*rooms)) {
                 fputs("Error allocating memory\n", stderr);
-                return NULL;
+                return 0;
             }
             for (n=BUFSIZE*(r-1); n<BUFSIZE*r; n++) {
-                rooms[n] = malloc(sizeof(char)*MAXROOMLEN);
-                if (!rooms[n]) {
+                (*rooms)[n] = malloc(sizeof(char)*MAXROOMLEN);
+                if (!(*rooms)[n]) {
                     fputs("Error allocating memory\n", stderr);
-                    return NULL;
+                    return 0;
                 }
             }
         }
-        if (strcmp(rooms[i], "\n")) {
-            //printf("%s", rooms[i]);
+        if (strcmp((*rooms)[i], "\n")) {
+            //printf("%s", (*rooms)[i]);
             ++i;
         }
     }
 
-    return rooms;
+    /* Return array length. */
+    return i;
 }
 
 struct Reservation* readreservation(FILE* fp) {
@@ -146,48 +152,49 @@ int writereservation(FILE* fp, struct Reservation* r) {
     return 1;
 }
 
-struct Reservation** readsched(FILE* fp) {
-    struct Reservation** sched = malloc(sizeof(struct Reservation*)*BUFSIZE);
-    if (!sched) {
+int readsched(FILE* fp, struct Reservation*** sched) {
+    (*sched) = malloc(sizeof(struct Reservation*)*BUFSIZE);
+    if (!(*sched)) {
         fputs("Error allocating memory\n", stderr);
-        return NULL;
+        return 0;
     }
     int schedsize;
     if (fread(&schedsize, sizeof(int), 1, fp) != 1) {
         fputs("Error reading data\n", stderr);
-        return NULL;
+        return 0;
     }
     int i, n;
     int r = 1;
     for (i=0; i<=schedsize-1; i++) {
-        sched[i] = malloc(sizeof(struct Reservation)*MAXROOMLEN);
-        if (!sched[i]) {
+        (*sched)[i] = malloc(sizeof(struct Reservation)*MAXROOMLEN);
+        if (!(*sched)[i]) {
             fputs("Error allocating memory\n", stderr);
-            return NULL;
+            return 0;
         }
-        sched[i] = readreservation(fp);
-        if (!sched[i]) {
-            return NULL;
+        (*sched)[i] = readreservation(fp);
+        if (!(*sched)[i]) {
+            return 0;
         }
         if (i>=(BUFSIZE-1)*r) {
             r++;
-            sched = realloc(sched, sizeof(struct Reservation*)*BUFSIZE*r);
-            if (!sched) {
+            (*sched) = realloc((*sched), sizeof(struct Reservation*)*BUFSIZE*r);
+            if (!(*sched)) {
                 fputs("Error allocating memory\n", stderr);
-                return NULL;
+                return 0;
             }
             for (n=BUFSIZE*(r-1); n<BUFSIZE*r; n++) {
-                sched[n] = malloc(sizeof(struct Reservation)*MAXROOMLEN);
-                if (!sched[n]) {
+                (*sched)[n] = malloc(sizeof(struct Reservation)*MAXROOMLEN);
+                if (!(*sched)[n]) {
                     fputs("Error allocating memory\n", stderr);
-                    return NULL;
+                    return 0;
                 }
             }
         }
     }
     for (n=0; n<i; n++) {
-        printf("%s%s%d\n%d\n", sched[n]->room, sched[n]->description, sched[n]->start, sched[n]->end);
+        printf("%s%s%s%s", (*sched)[n]->room, (*sched)[n]->description, ctime(&(*sched)[n]->start), ctime(&(*sched)[n]->end));
     }
 
-    return sched;
+    /* Return length of array. */
+    return i;
 }
