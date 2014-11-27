@@ -7,10 +7,6 @@
 #include "crrses.h"
 #include "handlers.h"
 
-void* end_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
-    return NULL;
-}
-
 void* newreservation_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
@@ -208,8 +204,8 @@ void* resview_handler(char** rooms, int roomslen, struct Reservation*** sched, i
     writelinef(window, winheight, &d, buf, "Start: %s", ctime(&((*list)[index])->start));
     writelinef(window, winheight, &d, buf, "End: %s", ctime(&((*list)[index])->end));
     writeline(window, winheight, &d, buf, "");
-    writeline(window, winheight, &d, buf, "Leave blank and press Enter to edit,");
-    writeline(window, winheight, &d, buf, "or write anything else to return to the main menu.");
+    writeline(window, winheight, &d, buf, "Leave blank and press Enter twice to edit, or");
+    writeline(window, winheight, &d, buf, "write anything else and press Enter twice to return to the main menu.");
 
     return edit_handler;
 }
@@ -219,7 +215,7 @@ void* edit_handler(char** rooms, int roomslen, struct Reservation*** sched, int*
     int d = 0;
     cleardisplay(window);
 
-    if (strncmp("", line, 1)) {
+    if (strncmp("\n", line, 1)) {
         return main_handler;
     } else {
         return newreservation_handler;
