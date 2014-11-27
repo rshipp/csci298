@@ -216,6 +216,18 @@ void* resview_handler(char** rooms, int roomslen, struct Reservation*** sched, i
     return edit_handler;
 }
 
+void* edit_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
+    char buf[BUFSIZE];
+    int d = 0;
+    cleardisplay(window);
+
+    if (strncmp("", line, 1)) {
+        return main_handler;
+    } else {
+        return newreservation_handler;
+    }
+}
+
 void* search_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
@@ -227,6 +239,7 @@ void* search_handler(char** rooms, int roomslen, struct Reservation*** sched, in
 void* main_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
+    int index = atoi(line);
     cleardisplay(window);
     switch((int)line[0]) {
         case (int)'1':
@@ -236,8 +249,13 @@ void* main_handler(char** rooms, int roomslen, struct Reservation*** sched, int*
             writeline(window, winheight, &d, buf, "Enter a date in the format: YYYY-MM-DD");
             return dayview_handler;
         case (int)'3':
+            writeline(window, winheight, &d, buf, "Enter a room name:");
+            for (int i=0; i<roomslen; i++) {
+                writeline(window, winheight, &d, buf, rooms[i]);
+            }
             return roomview_handler;
         case (int)'4':
+            writeline(window, winheight, &d, buf, "Enter a string to search for:");
             return search_handler;
         default:
             writeline(window, winheight, &d, buf, "Invalid choice. Try again.");
