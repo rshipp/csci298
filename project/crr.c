@@ -106,13 +106,14 @@ int main(int argc, char* argv[])
                     return 1;
                 }
             default :
-                confirmquit = 0;
                 if ( isprint(ch) ) {
+                    confirmquit = 0;
                     line[e] = (char)ch;
                     snprintf( buf, BUFSIZE, "%c", ch );
                     mvwprintw( edit, 1, ++e + 1, buf );
                     wrefresh(edit);
                 } else if ( ch == KEY_LF || ch == KEY_ENTER ) {
+                    confirmquit = 0;
                     line[e] = '\0';
                     e = 0;
                     wclear(edit);
@@ -120,15 +121,18 @@ int main(int argc, char* argv[])
                     mvwprintw(edit, 0, 3, EDIT_TITLE);
                     wrefresh(edit);
                     // Handle the input.
-                    inputhandler = inputhandler(rooms, roomslen, &sched, &schedlen, &partial, &list, display, dispheight, line);
+                    inputhandler = inputhandler(rooms, roomslen, &sched, &schedlen, &partial, &list, display, dispheight, strncat(line, "\n", 1));
                     if (inputhandler == NULL) {
                         endwin();
                         return 1;
                     }
                 } else if ( ch == KEY_DEL || ch == KEY_BACKSPACE ) {
-                    snprintf( buf, BUFSIZE, "%c", ' ' );
-                    mvwprintw( edit, 1, e + 1, buf );
-                    line[--e] = '\0';
+                    confirmquit = 0;
+                    if (e > 0) {
+                        snprintf( buf, BUFSIZE, "%c", ' ' );
+                        mvwprintw( edit, 1, e + 1, buf );
+                        line[--e] = '\0';
+                    }
                     wrefresh(edit);
                 }
                 break;

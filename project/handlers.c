@@ -50,7 +50,7 @@ void* nr_pickaroom_handler(char** rooms, int roomslen, struct Reservation*** sch
 
     int i;
     for (i=0; i<roomslen; i++) {
-        if (!strcmp(strcat(line, "\n"), rooms[i])) {
+        if (!strcmp(line, rooms[i])) {
             strncpy((*partial)->room, line, sizeof((*partial)->room));
             writelinef(window, winheight, &d, buf, "Reserving %s", line);
             writeline(window, winheight, &d, buf, "Enter a starting time in YYYY-MM-DD HH:MM:SS format.");
