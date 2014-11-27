@@ -17,7 +17,7 @@ void* newreservation_handler(char** rooms, int roomslen, struct Reservation*** s
     cleardisplay(window);
 
     struct tm* t = malloc(sizeof(struct tm));
-    if (!strptime(line, "%F %T", t)) {
+    if (!strptime(line, "%F %T\n", t)) {
         writeline(window, winheight, &d, buf, "Enter a date and 24-hour time in the format: YYYY-MM-DD HH:MM:SS");
         writeline(window, winheight, &d, buf, "Invalid timestamp. Try again.");
         return newreservation_handler;
@@ -68,7 +68,7 @@ void* nr_start_handler(char** rooms, int roomslen, struct Reservation*** sched, 
     cleardisplay(window);
 
     struct tm* t = malloc(sizeof(struct tm));
-    if (!strptime(line, "%F %T", t)) {
+    if (!strptime(line, "%F %T\n", t)) {
         writeline(window, winheight, &d, buf, "Enter a starting time in the format: YYYY-MM-DD HH:MM:SS");
         writeline(window, winheight, &d, buf, "Invalid timestamp. Try again.");
         return nr_start_handler;
@@ -89,7 +89,7 @@ void* nr_end_handler(char** rooms, int roomslen, struct Reservation*** sched, in
     cleardisplay(window);
 
     struct tm* t = malloc(sizeof(struct tm));
-    if (!strptime(line, "%F %T", t)) {
+    if (!strptime(line, "%F %T\n", t)) {
         writeline(window, winheight, &d, buf, "Enter an ending time (AFTER the starting time) in YYYY-MM-DD HH:MM:SS format.");
         writeline(window, winheight, &d, buf, "Invalid timestamp. Try again.");
         return nr_end_handler;
@@ -130,12 +130,12 @@ void* dayview_handler(char** rooms, int roomslen, struct Reservation*** sched, i
     int d = 0;
     cleardisplay(window);
 
-    struct tm* t = malloc(sizeof(struct tm));
+    struct tm* t = calloc(1, sizeof(struct tm));
     if (!t) {
         fputs("Error allocating memory\n", stderr);
         return NULL;
     }
-    if (!strptime(line, "%F", t)) {
+    if (!strptime(line, "%F\n", t)) {
         writeline(window, winheight, &d, buf, "Enter a date in the format: YYYY-MM-DD");
         writeline(window, winheight, &d, buf, "Invalid date. Try again.");
         return dayview_handler;

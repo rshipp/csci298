@@ -228,7 +228,7 @@ int reservations_for_day(time_t time, struct Reservation** sched, int schedlen, 
 
     int i, n = 0;
     for (i=0; i<schedlen; i++) {
-        if (day == (sched[i]->start)/(24*60*60) || day == (sched[i]->end)/(24*60*60)) {
+        if (day >= (sched[i]->start)/(24*60*60) && day <= (sched[i]->end)/(24*60*60)) {
             (*reservations)[n] = sched[i];
             ++n;
         }
