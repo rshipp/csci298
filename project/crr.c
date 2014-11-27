@@ -109,7 +109,9 @@ int main(int argc, char* argv[])
                     confirmquit = 1;
                 } else {
                     /* save and quit */
-                    fclose(schedfile);
+                    if (schedfile) {
+                        fclose(schedfile);
+                    }
                     FILE* wschedfile = fopen(argv[2], "w");
                     if (!wschedfile) {
                         fprintf(stderr, "Error opening file '%s' for writing\n", argv[2]);

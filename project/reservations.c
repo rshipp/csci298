@@ -77,7 +77,11 @@ int writereservation(FILE* fp, struct Reservation* r) {
         fputs("Error writing data\n", stderr);
         return 0;
     }
-    if(!fputs(r->description, fp)) {
+    char* description = r->description;
+    if (r->description[strlen(r->description)-1] != '\n') {
+        description = strncat(r->description, "\n", 1);
+    }
+    if(!fputs(description, fp)) {
         fputs("Error writing data\n", stderr);
         return 0;
     }
