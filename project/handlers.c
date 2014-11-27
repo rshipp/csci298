@@ -165,7 +165,7 @@ void* dayview_handler(char** rooms, int roomslen, struct Reservation*** sched, i
     writeline(window, winheight, &d, buf, "Choose a number to view or edit a reservation.");
     *list = reservations;
 
-    return roomview_handler;
+    return resview_handler;
 }
 
 void* roomview_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
@@ -173,13 +173,47 @@ void* roomview_handler(char** rooms, int roomslen, struct Reservation*** sched, 
     int d = 0;
     cleardisplay(window);
 
+    writelinef(window, winheight, &d, buf, "Reservations for %s", line);
+
+    struct Reservation** reservations;
+    int numreservations = reservations_for_room(line, *sched, *schedlen, &reservations);
+    if (!numreservations) {
+        writeline(window, winheight, &d, buf, "None");
+        return roomview_handler;
+    }
+    int i;
+    for (i=0; i<numreservations; i++) {
+        snprintf( buf, BUFSIZE, "%d) %s", i, reservations[i]->room );
+        mvwprintw( window, d++ + 2, 2, buf );
+        d = d % winheight;
+        writelinef(window, winheight, &d, buf, "   %s", ctime(&(reservations[i]->start)));
+        writelinef(window, winheight, &d, buf, "   %s", ctime(&(reservations[i]->end)));
+    }
+
+    writeline(window, winheight, &d, buf, "");
+    writeline(window, winheight, &d, buf, "Choose a number to view or edit a reservation.");
+    *list = reservations;
+
+    return resview_handler;
+}
+
+void* resview_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
+    char buf[BUFSIZE];
+    int d = 0;
+    cleardisplay(window);
+
     int index = atoi(line);
+    writeline(window, winheight, &d, buf, "Reservation details");
+    writeline(window, winheight, &d, buf, "");
     writelinef(window, winheight, &d, buf, "Room: %s", ((*list)[index])->room);
     writelinef(window, winheight, &d, buf, "Desc: %s", ((*list)[index])->description);
     writelinef(window, winheight, &d, buf, "Start: %s", ctime(&((*list)[index])->start));
     writelinef(window, winheight, &d, buf, "End: %s", ctime(&((*list)[index])->end));
+    writeline(window, winheight, &d, buf, "");
+    writeline(window, winheight, &d, buf, "Leave blank and press Enter to edit,");
+    writeline(window, winheight, &d, buf, "or write anything else to return to the main menu.");
 
-    return end_handler;
+    return edit_handler;
 }
 
 void* search_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
@@ -193,7 +227,6 @@ void* search_handler(char** rooms, int roomslen, struct Reservation*** sched, in
 void* main_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
-    int index = atoi(line);
     cleardisplay(window);
     switch((int)line[0]) {
         case (int)'1':
