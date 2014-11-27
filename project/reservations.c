@@ -53,19 +53,19 @@ struct Reservation* readreservation(FILE* fp) {
         return NULL;
     }
     if(!fgets(r->room, sizeof(r->room), fp)) {
-        fputs("Error reading data1\n", stderr);
+        fputs("Error reading data\n", stderr);
         return NULL;
     }
     if(!fgets(r->description, sizeof(r->description), fp)) {
-        fputs("Error reading data2\n", stderr);
+        fputs("Error reading data\n", stderr);
         return NULL;
     }
     if (fread(&r->start, sizeof(r->start), 1, fp) != 1) {
-        fputs("Error reading data3\n", stderr);
+        fputs("Error reading data\n", stderr);
         return NULL;
     }
     if (fread(&r->end, sizeof(r->end), 1, fp) != 1) {
-        fputs("Error reading data4\n", stderr);
+        fputs("Error reading data\n", stderr);
         return NULL;
     }
 
