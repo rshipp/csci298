@@ -124,6 +124,7 @@ int main(int argc, char* argv[])
                     return 1;
                 }
 			default :
+                confirmquit = 0;
 				if ( isprint(ch) ) {
                     line[e] = (char)ch;
 					snprintf( buf, BUFSIZE, "%c", ch );

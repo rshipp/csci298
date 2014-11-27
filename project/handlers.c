@@ -58,8 +58,6 @@ void* nr_pickaroom_handler(char** rooms, int roomslen, struct Reservation*** sch
         }
     }
 
-    writelinef(window, winheight, &d, buf, "'%s'", line);
-    writelinef(window, winheight, &d, buf, "'%s'", rooms[i]);
     writeline(window, winheight, &d, buf, "Invalid room. Try again.");
     return nr_pickaroom_handler;
 }

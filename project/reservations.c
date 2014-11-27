@@ -208,7 +208,7 @@ int reservations_for_room(char* room, struct Reservation** sched, int schedlen, 
     }
     int i, n = 0;
     for (i=0; i<schedlen; i++) {
-        if (strcmp(room, sched[i]->room)) {
+        if (!strcmp(strncat(room, "\n", 1), sched[i]->room)) {
             (*reservations)[n] = sched[i];
             ++n;
         }
