@@ -62,6 +62,8 @@ int main(int argc, char* argv[])
         if (!sched) {
             return 1;
         }
+    } else {
+        sched = malloc(sizeof(struct Reservation*)*BUFSIZE);
     }
 
     /* curses */
@@ -84,6 +86,7 @@ int main(int argc, char* argv[])
     void* (*inputhandler)(char**, int, struct Reservation***, int*, struct Reservation**, struct Reservation***, WINDOW*, int, char*);
     struct Reservation* partial = makeemptyreservation();
     struct Reservation** list;
+    int confirmquit = 0;
 
     writeline(display, dispheight, &d, buf, "Select an option:");
     writeline(display, dispheight, &d, buf, "1) Make a new reservation");
@@ -92,7 +95,7 @@ int main(int argc, char* argv[])
     writeline(display, dispheight, &d, buf, "4) Search and edit/delete reservations");
     inputhandler = main_handler;
 
-	while((ch = getch()) != KEY_ESC) {
+	while((ch = getch())) {
 		switch (ch) {
 			case KEY_RESIZE:
 				strncpy( buf, "KEY_RESIZE", BUFSIZE );
@@ -100,6 +103,24 @@ int main(int argc, char* argv[])
 				d = d % dispheight;
 				dispheight = size_display( display, edit );
 				break;
+            case KEY_ESC:
+                if (!confirmquit) {
+                    writeline(display, dispheight, &d, buf, "Press Esc again to save and quit.");
+                    confirmquit = 1;
+                } else {
+                    /* save and quit */
+                    fclose(schedfile);
+                    FILE* wschedfile = fopen(argv[2], "w");
+                    if (!wschedfile) {
+                        fprintf(stderr, "Error opening file '%s' for writing\n", argv[2]);
+                        return 1;
+                    }
+                    writesched(wschedfile, sched, schedlen);
+                    fclose(wschedfile);
+
+                    endwin();
+                    return 1;
+                }
 			default :
 				if ( isprint(ch) ) {
                     line[e] = (char)ch;
