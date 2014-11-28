@@ -227,7 +227,31 @@ void* search_handler(char** rooms, int roomslen, struct Reservation*** sched, in
     int d = 0;
     cleardisplay(window);
 
-    return NULL;
+    /* remove trailing newline */
+    line[strlen(line)-1] = '\0';
+    writelinef(window, winheight, &d, buf, "Reservations matching '%s'", line);
+
+    struct Reservation** reservations;
+    int numreservations = reservations_search(line, *sched, *schedlen, &reservations);
+    if (!numreservations) {
+        writeline(window, winheight, &d, buf, "None");
+        return roomview_handler;
+    }
+    int i;
+    for (i=0; i<numreservations; i++) {
+        snprintf( buf, BUFSIZE, "%d) %s", i, reservations[i]->room );
+        mvwprintw( window, d++ + 2, 2, buf );
+        d = d % winheight;
+        writelinef(window, winheight, &d, buf, "   %s", reservations[i]->description);
+        writelinef(window, winheight, &d, buf, "   %s", ctime(&(reservations[i]->start)));
+        writelinef(window, winheight, &d, buf, "   %s", ctime(&(reservations[i]->start)));
+    }
+
+    writeline(window, winheight, &d, buf, "");
+    writeline(window, winheight, &d, buf, "Choose a number to view or edit a reservation.");
+    *list = reservations;
+
+    return resview_handler;
 }
 
 void* main_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
