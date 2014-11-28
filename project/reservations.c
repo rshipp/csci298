@@ -26,17 +26,17 @@ struct Reservation* makereservation(char* room, char* description, time_t start,
 }
 
 static int compare_reservations(const void* reservationx, const void* reservationy) {
-    int compare_room = strcmp((* (struct Reservation * const *) reservationx)->room, (* (struct Reservation * const *) reservationy)->room);
-    if (!compare_room) {
+    int compare_room = strcmp(( (struct Reservation *) reservationx)->room, ( (struct Reservation *) reservationy)->room);
+    if (compare_room == 0) {
         /* Rooms are the same.
          * If ystart >= xend, x < y.
          * If yend <= xstart, x > y.
          * Else x overlaps y and there is a conflict.
          */
 
-        if ((* (struct Reservation * const *) reservationy)->start >= (* (struct Reservation * const *) reservationx)->end) {
+        if (( (struct Reservation *) reservationy)->start >= ( (struct Reservation *) reservationx)->end) {
             return -1;
-        } else if ((* (struct Reservation * const *) reservationy)->end <= (* (struct Reservation * const *) reservationx)->start) {
+        } else if (( (struct Reservation *) reservationy)->end <= ( (struct Reservation *) reservationx)->start) {
             return 1;
         } else {
             return 0;
@@ -165,7 +165,7 @@ int writesched(FILE* fp, struct Reservation** sched, int schedsize) {
 int room_available(char* room, struct Reservation** sched, int schedlen, time_t time) {
     int i;
     for (i=0; i<schedlen; i++) {
-        if (strcmp(room, sched[i]->room)) {
+        if (!strcmp(room, sched[i]->room)) {
             if (time < sched[i]->start || time >= sched[i]->end) {
                 continue;
             } else {
@@ -185,7 +185,7 @@ int rooms_available(char** rooms, int roomslen, struct Reservation** sched, int 
     }
     int i, n = 0;
     for (i=0; i<roomslen; i++) {
-        if (!room_available(rooms[i], sched, schedlen, time)) {
+        if (room_available(rooms[i], sched, schedlen, time)) {
             (*available)[n] = malloc(MAXROOMLEN);
             if (!(*available)[n]) {
                 fputs("Error allocating memory\n", stderr);
@@ -253,4 +253,16 @@ int reservations_search(char* needle, struct Reservation** sched, int schedlen, 
     }
 
     return n;
+}
+
+void reservation_delete(struct Reservation*** sched, int* schedsize, struct Reservation* reservation) {
+    for (int i=0; i<(*schedsize); i++) {
+        if (compare_reservations(reservation, (*sched)[i]) == 0) {
+            (*sched)[i] = makeemptyreservation();
+            (*schedsize)--;
+            qsort(sched, *schedsize, sizeof(struct Reservation*), compare_reservations);
+            *sched = *sched + sizeof(struct Reservation**);
+            break;
+        }
+    }
 }

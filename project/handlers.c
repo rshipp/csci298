@@ -118,6 +118,8 @@ void* nr_desc_handler(char** rooms, int roomslen, struct Reservation*** sched, i
     writeline(window, winheight, &d, buf, "The room has been reserved.");
     writeline(window, winheight, &d, buf, "Press Enter to return to the main menu.");
 
+    *partial = makeemptyreservation();
+
     return main_handler;
 }
 
@@ -204,8 +206,11 @@ void* resview_handler(char** rooms, int roomslen, struct Reservation*** sched, i
     writelinef(window, winheight, &d, buf, "Start: %s", ctime(&((*list)[index])->start));
     writelinef(window, winheight, &d, buf, "End: %s", ctime(&((*list)[index])->end));
     writeline(window, winheight, &d, buf, "");
-    writeline(window, winheight, &d, buf, "Leave blank and press Enter twice to edit, or");
-    writeline(window, winheight, &d, buf, "write anything else and press Enter twice to return to the main menu.");
+    writeline(window, winheight, &d, buf, "Leave blank and press Enter twice to return to the main menu, or");
+    writeline(window, winheight, &d, buf, "enter 'd' and press Enter to delete this reservation, or");
+    writeline(window, winheight, &d, buf, "enter a date and 24-hour time in YYYY-MM-DD HH:MM:SS format to edit.");
+
+    *partial = (*list)[index];
 
     return edit_handler;
 }
@@ -215,10 +220,40 @@ void* edit_handler(char** rooms, int roomslen, struct Reservation*** sched, int*
     int d = 0;
     cleardisplay(window);
 
-    if (strncmp("\n", line, 1)) {
+    if (strncmp("d\n", line, 2) == 0) {
+        reservation_delete(sched, schedlen, *partial);
+        return main_handler;
+    } else if (strncmp("\n", line, 1) == 0) {
         return main_handler;
     } else {
-        return newreservation_handler;
+        /* delete the reservation */
+        reservation_delete(sched, schedlen, *partial);
+
+        struct tm* t = malloc(sizeof(struct tm));
+        if (!strptime(line, "%F %T\n", t)) {
+            writeline(window, winheight, &d, buf, "Enter a date and 24-hour time in the format: YYYY-MM-DD HH:MM:SS");
+            writeline(window, winheight, &d, buf, "Invalid timestamp. Try again.");
+            return newreservation_handler;
+        }
+        time_t time = mktime(t);
+
+        writelinef(window, winheight, &d, buf, "Rooms available on %s", ctime(&time));
+
+        char** available;
+        int numavailable = rooms_available(rooms, roomslen, *sched, *schedlen, time, &available);
+        if (!numavailable) {
+            writeline(window, winheight, &d, buf, "None");
+            return newreservation_handler;
+        }
+        int i;
+        for (i=0; i<numavailable; i++) {
+            writeline(window, winheight, &d, buf, available[i]);
+        }
+
+        writeline(window, winheight, &d, buf, "");
+        writeline(window, winheight, &d, buf, "Choose a room.");
+
+        return nr_pickaroom_handler;
     }
 }
 

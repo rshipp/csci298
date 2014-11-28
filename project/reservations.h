@@ -25,5 +25,6 @@ int rooms_available(char** rooms, int roomslen, struct Reservation** sched, int 
 int reservations_for_room(char* room, struct Reservation** sched, int schedlen, struct Reservation*** reservations);
 int reservations_for_day(time_t time, struct Reservation** sched, int schedlen, struct Reservation*** reservations);
 int reservations_search(char* needle, struct Reservation** sched, int schedlen, struct Reservation*** reservations);
+void reservation_delete(struct Reservation*** sched, int* schedsize, struct Reservation* reservation);
 
 #endif
