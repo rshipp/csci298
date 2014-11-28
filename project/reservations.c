@@ -8,7 +8,7 @@
 /* Reservations */
 
 struct Reservation* makeemptyreservation() {
-    struct Reservation* reservation = malloc(sizeof(struct Reservation));
+    struct Reservation* reservation = calloc(1, sizeof(struct Reservation));
     strncpy(reservation->room, "", sizeof(reservation->room));
     strncpy(reservation->description, "", sizeof(reservation->description));
     reservation->start = 0;
@@ -259,9 +259,12 @@ void reservation_delete(struct Reservation*** sched, int* schedsize, struct Rese
     for (int i=0; i<(*schedsize); i++) {
         if (compare_reservations(reservation, (*sched)[i]) == 0) {
             (*sched)[i] = makeemptyreservation();
+            qsort(*sched, *schedsize, sizeof(struct Reservation*), compare_reservations);
+            free((*sched)[0]);
+            for(int n=1; n<(*schedsize); n++) {
+                (*sched)[n-1] = (*sched)[n];
+            }
             (*schedsize)--;
-            qsort(sched, *schedsize, sizeof(struct Reservation*), compare_reservations);
-            *sched = *sched + sizeof(struct Reservation**);
             break;
         }
     }
