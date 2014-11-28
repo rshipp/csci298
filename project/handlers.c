@@ -235,7 +235,9 @@ void* search_handler(char** rooms, int roomslen, struct Reservation*** sched, in
     int numreservations = reservations_search(line, *sched, *schedlen, &reservations);
     if (!numreservations) {
         writeline(window, winheight, &d, buf, "None");
-        return roomview_handler;
+        writeline(window, winheight, &d, buf, "");
+        writeline(window, winheight, &d, buf, "Enter a string to search for:");
+        return search_handler;
     }
     int i;
     for (i=0; i<numreservations; i++) {
