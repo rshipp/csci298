@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
             return 1;
         }
     } else {
-        sched = malloc(sizeof(struct Reservation*)*BUFSIZE);
+        sched = malloc(sizeof(struct Reservation*));
     }
 
     /* curses */
