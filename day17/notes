@@ -1,0 +1,25 @@
+Final Project
+=============
+
+1. a daemon
+2. read rooms.dat
+3. create a fifo for each room name
+   (all lowercase, remove whitespace, suffix fifo)
+4. open named pipes
+5. Read schedule.dat
+6. 
+
+
+Thermostat Protocol
+-------------------
+
+daemon      pipe
+~~~~~~      ~~~~
+Q           XXX Q OK\n
+H           H OK\n
+C           C OK\n
+
+XXX is room temp
+
+69-74 degrees when occupied
+50-92 degrees when not
