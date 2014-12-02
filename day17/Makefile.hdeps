@@ -1,0 +1,29 @@
+# a critical macros (and an example macro calling in make)
+srcdep=$(strip $(patsubst %,.%.d,${1}))
+
+CLIKESOURCE=$(wildcard *.c *.cxx *.cc)
+$(warning CLIKESOURCE=${CLIKESOURCE})
+AUTODEPS=$(call srcdep,${CLIKESOURCE})
+$(warning AUTODEPS=${AUTODEPS})
+
+###############################################################################
+# we can use one rule for both C and C++ files, capapability that may be specific to GNU gcc, I dunno.
+# set -e -> fail on any exit status that is non-zero
+# < first dependency
+# * the step of rule (the matching part of %)
+# @ the target to create (the .*.d file)
+.%.d: % 
+	@set -e; \
+	${CC} -M ${CPPFLAGS} $< >$@
+
+clean::
+	${RM} ${AUTODEPS}
+	
+
+$(warning MAKECMDGOALS=${MAKECMDGOALS})
+ifeq ($(filter clean% %clean,${MAKECMDGOALS}),)
+# do not include dependencies when we are cleaning
+# (-) means don't fail if it doesn't exist,
+-include ${AUTODEPS} /dev/null
+endif
+
