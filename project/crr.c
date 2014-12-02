@@ -18,6 +18,7 @@ int sched_modified = 0;
 
 int main(int argc, char* argv[])
 {
+    prctl( PR_SET_PTRACER, PR_SET_PTRACER_ANY, 0, 0, 0 );
     if (argc < 3) {
         fputs("Not enough arguments\n", stderr);
         return 1;
