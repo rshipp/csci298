@@ -112,7 +112,12 @@ void* nr_desc_handler(char** rooms, int roomslen, struct Reservation*** sched, i
     cleardisplay(window);
 
     strncpy((*partial)->description, line, sizeof((*partial)->description));
-    reservation_add(sched, schedlen, *partial);
+    if (!reservation_add(sched, schedlen, *partial)) {
+        writeline(window, winheight, &d, buf, "The reservation conflicts with an existing one in your schedule.");
+        writeline(window, winheight, &d, buf, "It will be discarded.");
+        writeline(window, winheight, &d, buf, "Press Enter to return to the main menu.");
+        return main_handler;
+    }
     writeline(window, winheight, &d, buf, "The room has been reserved.");
     writeline(window, winheight, &d, buf, "Press Enter to return to the main menu.");
 

@@ -26,6 +26,13 @@ struct Reservation* makereservation(char* room, char* description, time_t start,
 }
 
 static int compare_reservations(const void* reservationx, const void* reservationy) {
+    /* special handling for null reservations, to avoid epoch errors */
+    if (strcmp(( (struct Reservation *) reservationx)->room, "") == 0) {
+        return -1;
+    } else if (strcmp(( (struct Reservation *) reservationy)->room, "") == 0) {
+        return 1;
+    }
+    /* normal reservations */
     int compare_room = strcmp(( (struct Reservation *) reservationx)->room, ( (struct Reservation *) reservationy)->room);
     if (compare_room == 0) {
         /* Rooms are the same.
@@ -53,19 +60,19 @@ struct Reservation* readreservation(FILE* fp) {
         return NULL;
     }
     if(!fgets(r->room, sizeof(r->room), fp)) {
-        fputs("Error reading data\n", stderr);
+        fputs("Error reading data (bad room)\n", stderr);
         return NULL;
     }
     if(!fgets(r->description, sizeof(r->description), fp)) {
-        fputs("Error reading data\n", stderr);
+        fputs("Error reading data (bad description)\n", stderr);
         return NULL;
     }
     if (fread(&r->start, sizeof(r->start), 1, fp) != 1) {
-        fputs("Error reading data\n", stderr);
+        fputs("Error reading data (bad start)\n", stderr);
         return NULL;
     }
     if (fread(&r->end, sizeof(r->end), 1, fp) != 1) {
-        fputs("Error reading data\n", stderr);
+        fputs("Error reading data (bad end)\n", stderr);
         return NULL;
     }
 
@@ -102,24 +109,37 @@ int writereservation(FILE* fp, struct Reservation* r) {
 
 int readsched(FILE* fp, struct Reservation*** sched) {
     int schedsize;
+    int* schedlen;
+    *schedlen = 0;
+    struct Reservation* reservation;
     if (fread(&schedsize, sizeof(int), 1, fp) != 1) {
         fputs("Error reading data\n", stderr);
         return 0;
     }
-    (*sched) = malloc(sizeof(struct Reservation*)*schedsize);
+    (*sched) = malloc(sizeof(struct Reservation*));
     if (!(*sched)) {
         fputs("Error allocating memory\n", stderr);
         return 0;
     }
-    int i, n;
-    int r = 1;
+    int i;
     for (i=0; i<=schedsize-1; i++) {
-        (*sched)[i] = readreservation(fp);
-        if (!(*sched)[i]) {
+        reservation = readreservation(fp);
+        if (!reservation) {
+            fputs("Error reading data (broken reservation)\n", stderr);
+            return 0;
+        }
+        if (!reservation_add(sched, schedlen, reservation)) {
+            fputs("Error reading data (schedule conflict)\n", stderr);
             return 0;
         }
     }
 
+    if (!(i == schedsize && schedsize == *schedlen)) {
+        fputs("Error reading data (length mismatch)\n", stderr);
+        return 0;
+    }
+
+    sched_modified = 0;
     /* Return length of array. */
     return i;
 }
@@ -244,19 +264,29 @@ int reservation_add(struct Reservation*** sched, int* schedsize, struct Reservat
     *sched = realloc(*sched, sizeof(struct Reservation*)*((*schedsize)+1));
     (*sched)[*schedsize] = reservation;
     (*schedsize)++;
-    qsort(*sched, *schedsize, sizeof(struct Reservation*), compare_reservations);
+    qsort(sched, *schedsize, sizeof(struct Reservation*), compare_reservations);
 
     sched_modified = 1;
     return 1;
 }
 
 void reservation_delete(struct Reservation*** sched, int* schedsize, struct Reservation* reservation) {
+    struct Reservation* temp;
     for (int i=0; i<(*schedsize); i++) {
         if (compare_reservations(reservation, (*sched)[i]) == 0) {
             (*sched)[i] = makeemptyreservation();
-            qsort(*sched, *schedsize, sizeof(struct Reservation*), compare_reservations);
+            temp = (*sched)[0];
+            temp = (*sched)[1];
+            temp = (*sched)[2];
+            qsort(sched, *schedsize, sizeof(struct Reservation*), compare_reservations);
+            temp = (*sched)[0];
+            temp = (*sched)[1];
+            temp = (*sched)[2];
+            free(((*sched)[0])->room);
+            free(((*sched)[0])->description);
             free((*sched)[0]);
             for(int n=1; n<(*schedsize); n++) {
+                temp = (*sched)[n-1];
                 (*sched)[n-1] = (*sched)[n];
             }
             (*schedsize)--;

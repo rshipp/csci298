@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     int schedlen = 0;
     if (schedfile) {
         schedlen = readsched(schedfile, &sched);
-        if (!sched) {
+        if (!sched || !schedlen) {
             return 1;
         }
     } else {
@@ -87,9 +87,12 @@ int main(int argc, char* argv[])
                 dispheight = size_display( display, edit );
                 break;
             case KEY_ESC:
-                if (!confirmquit) {
+                if (!confirmquit && sched_modified) {
                     writeline(display, dispheight, &d, buf, "Press Esc again to save and quit.");
                     confirmquit = 1;
+                } else if (!sched_modified) {
+                    endwin();
+                    return 1;
                 } else {
                     /* save and quit */
                     if (schedfile) {
