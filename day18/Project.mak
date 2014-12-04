@@ -1,6 +1,7 @@
 CFLAGS+= --std=c99
-TARGET_APP= thermostat example example-ta
-TARGET_SO= libtimeaccel.so
+APPS+= thermostat example example-ta
+TARGET_SO+= libtimeaccel.so
+LIBS+= -lm
 
 thermostat.o timeaccel.o example-thermostat-client.o rvgs.o rngs.o: CFLAGS+= -Wno-unused-value 
 thermostat.o timeaccel.o example-thermostat-client.o rvgs.o rngs.o: CFLAGS+= -Wno-unused-but-set-variable
