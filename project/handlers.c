@@ -7,7 +7,7 @@
 #include "crrses.h"
 #include "handlers.h"
 
-void* newreservation_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
+void* newreservation_handler(char** rooms, int roomslen, struct Reservation** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);
@@ -39,7 +39,7 @@ void* newreservation_handler(char** rooms, int roomslen, struct Reservation*** s
     return nr_pickaroom_handler;
 }
 
-void* nr_pickaroom_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
+void* nr_pickaroom_handler(char** rooms, int roomslen, struct Reservation** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);
@@ -58,7 +58,7 @@ void* nr_pickaroom_handler(char** rooms, int roomslen, struct Reservation*** sch
     return nr_pickaroom_handler;
 }
 
-void* nr_start_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
+void* nr_start_handler(char** rooms, int roomslen, struct Reservation** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);
@@ -79,7 +79,7 @@ void* nr_start_handler(char** rooms, int roomslen, struct Reservation*** sched, 
     return nr_end_handler;
 }
 
-void* nr_end_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
+void* nr_end_handler(char** rooms, int roomslen, struct Reservation** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);
@@ -106,7 +106,7 @@ void* nr_end_handler(char** rooms, int roomslen, struct Reservation*** sched, in
     return nr_desc_handler;
 }
 
-void* nr_desc_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
+void* nr_desc_handler(char** rooms, int roomslen, struct Reservation** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);
@@ -126,7 +126,7 @@ void* nr_desc_handler(char** rooms, int roomslen, struct Reservation*** sched, i
     return main_handler;
 }
 
-void* dayview_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
+void* dayview_handler(char** rooms, int roomslen, struct Reservation** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);
@@ -167,7 +167,7 @@ void* dayview_handler(char** rooms, int roomslen, struct Reservation*** sched, i
     return resview_handler;
 }
 
-void* roomview_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
+void* roomview_handler(char** rooms, int roomslen, struct Reservation** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);
@@ -196,7 +196,7 @@ void* roomview_handler(char** rooms, int roomslen, struct Reservation*** sched, 
     return resview_handler;
 }
 
-void* resview_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
+void* resview_handler(char** rooms, int roomslen, struct Reservation** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);
@@ -218,7 +218,7 @@ void* resview_handler(char** rooms, int roomslen, struct Reservation*** sched, i
     return edit_handler;
 }
 
-void* edit_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
+void* edit_handler(char** rooms, int roomslen, struct Reservation** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);
@@ -260,7 +260,7 @@ void* edit_handler(char** rooms, int roomslen, struct Reservation*** sched, int*
     }
 }
 
-void* search_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
+void* search_handler(char** rooms, int roomslen, struct Reservation** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     cleardisplay(window);
@@ -294,7 +294,7 @@ void* search_handler(char** rooms, int roomslen, struct Reservation*** sched, in
     return resview_handler;
 }
 
-void* main_handler(char** rooms, int roomslen, struct Reservation*** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
+void* main_handler(char** rooms, int roomslen, struct Reservation** sched, int* schedlen, struct Reservation** partial, struct Reservation*** list, WINDOW* window, int winheight, char* line) {
     char buf[BUFSIZE];
     int d = 0;
     int index = atoi(line);

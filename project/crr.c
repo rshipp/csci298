@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
     /* Read in schedule data, if it exists. */
     FILE* schedfile = fopen(argv[2], "r");
-    struct Reservation** sched;
+    struct Reservation* sched;
     int schedlen = 0;
     if (schedfile) {
         schedlen = readsched(schedfile, &sched);
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
             return 1;
         }
     } else {
-        sched = malloc(sizeof(struct Reservation*));
+        sched = malloc(sizeof(struct Reservation));
     }
 
     /* curses */
