@@ -142,6 +142,7 @@ void* dayview_handler(char** rooms, int roomslen, struct Reservation** sched, in
     if (!strptime(line, "%F\n", t)) {
         writeline(window, winheight, &d, "Enter a date in the format: YYYY-MM-DD");
         writeline(window, winheight, &d, "Invalid date. Try again.");
+        free(t);
         return dayview_handler;
     }
     time_t time = mktime(t);
