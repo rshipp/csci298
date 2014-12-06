@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
     keypad(stdscr,TRUE);
     curs_set(FALSE);
 
-    // set up initial windows
+    /* set up initial windows */
     WINDOW* display = newwin(1, 1, 0, 0 );
     WINDOW* edit = newwin(1,1, 0, 0 );
     int dispheight = size_display( display, edit );
@@ -66,16 +66,16 @@ int main(int argc, char* argv[])
     char buf[BUFSIZE];
     char line[BUFSIZE];
     int ch;
-    void* (*inputhandler)(char**, int, struct Reservation***, int*, struct Reservation**, struct Reservation***, WINDOW*, int, char*);
-    struct Reservation* partial = makeemptyreservation();
-    struct Reservation** list;
+    void* (*inputhandler)(char**, int, struct Reservation**, int*, struct Reservation**, struct Reservation**, WINDOW*, int, char*);
+    struct Reservation* partial = calloc(1, sizeof(struct Reservation));
+    struct Reservation* list;
     int confirmquit = 0;
 
-    writeline(display, dispheight, &d, buf, "Select an option:");
-    writeline(display, dispheight, &d, buf, "1) Make a new reservation");
-    writeline(display, dispheight, &d, buf, "2) View/edit reservations for a day");
-    writeline(display, dispheight, &d, buf, "3) View/edit reservations for a room");
-    writeline(display, dispheight, &d, buf, "4) Search and edit/delete reservations");
+    writeline(display, dispheight, &d, "Select an option:");
+    writeline(display, dispheight, &d, "1) Make a new reservation");
+    writeline(display, dispheight, &d, "2) View/edit reservations for a day");
+    writeline(display, dispheight, &d, "3) View/edit reservations for a room");
+    writeline(display, dispheight, &d, "4) Search and edit/delete reservations");
     inputhandler = main_handler;
 
     while((ch = getch())) {
@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
                 break;
             case KEY_ESC:
                 if (!confirmquit && sched_modified) {
-                    writeline(display, dispheight, &d, buf, "Press Esc again to save and quit.");
+                    writeline(display, dispheight, &d, "Press Esc again to save and quit.");
                     confirmquit = 1;
                 } else if (!sched_modified) {
                     endwin();
@@ -124,8 +124,8 @@ int main(int argc, char* argv[])
                     draw_borders(edit, HORZ2, VERT2, CORNER);
                     mvwprintw(edit, 0, 3, EDIT_TITLE);
                     wrefresh(edit);
-                    // Handle the input.
-                    inputhandler = inputhandler(rooms, roomslen, &sched, &schedlen, &partial, &list, display, dispheight, strncat(line, "\n", 1));
+                    /* Handle the input. */
+                    inputhandler = inputhandler(rooms, roomslen, &sched, &schedlen, &partial, &list, display, dispheight, strncat(line, "\n", 2));
                     if (inputhandler == NULL) {
                         endwin();
                         return 1;
@@ -143,7 +143,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    // close curses lib, reset terminal
+    /* close curses lib, reset terminal */
     endwin();
 
     return 0;

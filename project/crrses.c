@@ -12,19 +12,19 @@ void draw_borders(WINDOW * screen, char horiz, char vert, char corner)
 
 	getmaxyx(screen, y, x);
 
-	// 4 corners
+	/* 4 corners */
 	mvwaddch(screen, 0, 0, corner);
 	mvwaddch(screen, y - 1, 0, corner);
 	mvwaddch(screen, 0, x - 1, corner);
 	mvwaddch(screen, y - 1, x - 1, corner);
 
-	// sides
+	/* sides */
 	for(i = 1; i < (y - 1); i++) {
 		mvwaddch(screen, i, 0, vert);
 		mvwaddch(screen, i, x - 1, vert);
 	}
 
-	// top and bottom
+	/* top and bottom */
 	for(i = 1; i < (x - 1); i++) {
 		mvwaddch(screen, 0, i, horiz);
 		mvwaddch(screen, y - 1, i, horiz);
@@ -36,12 +36,13 @@ int size_display( WINDOW* display, WINDOW* edit )
 	int parent_x, parent_y;
 	int edit_size = 3;
 
-	// always do this at startup or resize, otherwise you have strange initial
-	// refresh semantics
+	/* always do this at startup or resize, otherwise you have strange initial
+	 * refresh semantics
+     */
 	wclear(stdscr);
 	refresh();
 
-	// set up initial windows
+	/* set up initial windows */
 	getmaxyx(stdscr, parent_y, parent_x);
 
 	wresize(display, parent_y - edit_size, parent_x);
@@ -63,20 +64,21 @@ int size_display( WINDOW* display, WINDOW* edit )
 	return parent_y - 4 - edit_size;
 }
 
-void writelinef(WINDOW* window, int winheight, int* c, char* buf, char* format, char* line) {
-    snprintf( buf, BUFSIZE, format, line );
-    mvwprintw( window, (*c)++ + 2, 2, buf );
+void writelinef(WINDOW* window, int winheight, int* c, char* format, char* line) {
+    char buff[BUFSIZE];
+    snprintf( buff, BUFSIZE, format, line );
+    mvwprintw( window, (*c)++ + 2, 2, buff );
     *c = *c % winheight;
     wrefresh(window);
 }
 
-void writeline(WINDOW* window, int winheight, int* c, char* buf, char* line) {
-    writelinef(window, winheight, c, buf, "%s", line);
+void writeline(WINDOW* window, int winheight, int* c, char* line) {
+    writelinef(window, winheight, c, "%s", line);
 }
 
 void cleardisplay(WINDOW* window) {
-	int parent_x, parent_y;
-	getmaxyx(stdscr, parent_y, parent_x);
+	int parent_x;
+	parent_x = getmaxx(stdscr);
 	wclear(window);
 	draw_borders(window, HORZ1, VERT1, CORNER);
 	mvwprintw(window, 0, 3, DISPLAY_TITLE);

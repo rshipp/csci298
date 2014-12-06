@@ -1,6 +1,6 @@
-CFLAGS=-g -D_GNU_SOURCE -std=c99 -lcurses
+CFLAGS=-g -D_GNU_SOURCE -std=c99 -lncurses -Wall
 
-crr: crrses.o handlers.o reservations.o rooms.o crr.o -lcurses
+crr: crrses.o handlers.o reservations.o rooms.o crr.o -lncurses
 
 .PHONY: clean
 clean:

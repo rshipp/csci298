@@ -4,10 +4,6 @@
 #include "crr.h"
 #include "rooms.h"
 
-static int compare_rooms(const void* roomx, const void* roomy) {
-    return strcmp(* (char * const *) roomx, * (char * const *) roomy);
-}
-
 int readrooms(FILE* fp, char*** rooms) {
     (*rooms) = malloc(sizeof(char*)*BUFSIZE);
     if (!(*rooms)) {
@@ -40,7 +36,6 @@ int readrooms(FILE* fp, char*** rooms) {
             }
         }
         if (strcmp((*rooms)[i], "\n")) {
-            //printf("%s", (*rooms)[i]);
             ++i;
         }
     }

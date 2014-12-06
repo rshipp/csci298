@@ -3,9 +3,6 @@
 
 #include <stdio.h>
 
-/* Room */
-static int compare_rooms(const void* roomx, const void* roomy);
-
 /* Rooms */
 int readrooms(FILE* fp, char*** rooms);
 

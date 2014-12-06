@@ -24,8 +24,8 @@
 
 void draw_borders(WINDOW * screen, char horiz, char vert, char corner);
 int size_display( WINDOW* display, WINDOW* edit );
-void writelinef(WINDOW* window, int winheight, int* c, char* buf, char* format, char* line);
-void writeline(WINDOW* window, int winheight, int* c, char* buf, char* line);
+void writelinef(WINDOW* window, int winheight, int* c, char* format, char* line);
+void writeline(WINDOW* window, int winheight, int* c, char* line);
 void cleardisplay(WINDOW* window);
 
 #endif
