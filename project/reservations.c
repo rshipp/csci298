@@ -211,7 +211,7 @@ int reservations_search(char* needle, struct Reservation* sched, int schedlen, s
 }
 
 int reservation_add(struct Reservation** sched, int* schedsize, struct Reservation* reservation) {
-    if(bsearch(reservation, *sched, *schedsize, sizeof(struct Reservation*), compare_reservations)) {
+    if (bsearch(reservation, *sched, *schedsize, sizeof(struct Reservation*), compare_reservations)) {
         /* can't add overlapping reservations */
         return 0;
     }
