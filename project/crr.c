@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
     char line[BUFSIZE];
     int ch;
     void* (*inputhandler)(char**, int, struct Reservation**, int*, struct Reservation**, struct Reservation**, WINDOW*, int, char*);
-    struct Reservation* partial = calloc(1, sizeof(struct Reservation));
+    struct Reservation* partial = calloc(1, sizeof(struct Reservation*));
     struct Reservation* list;
     int confirmquit = 0;
 

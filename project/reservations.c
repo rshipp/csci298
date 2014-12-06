@@ -211,7 +211,7 @@ int reservations_search(char* needle, struct Reservation* sched, int schedlen, s
 }
 
 int reservation_add(struct Reservation** sched, int* schedsize, struct Reservation* reservation) {
-    if (bsearch(reservation, *sched, *schedsize, sizeof(struct Reservation*), compare_reservations)) {
+    if (bsearch(reservation, *sched, *schedsize, sizeof(struct Reservation), compare_reservations)) {
         /* can't add overlapping reservations */
         return 0;
     }
@@ -219,7 +219,7 @@ int reservation_add(struct Reservation** sched, int* schedsize, struct Reservati
     *sched = realloc(*sched, sizeof(struct Reservation)*((*schedsize)+1));
     (*sched)[*schedsize] = *reservation;
     (*schedsize)++;
-    qsort(sched, *schedsize, sizeof(struct Reservation), compare_reservations);
+    qsort(*sched, *schedsize, sizeof(struct Reservation), compare_reservations);
 
     sched_modified = 1;
     return 1;
