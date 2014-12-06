@@ -211,12 +211,11 @@ int reservations_search(char* needle, struct Reservation* sched, int schedlen, s
 }
 
 int reservation_add(struct Reservation** sched, int* schedsize, struct Reservation* reservation) {
-    for (int i=0; i<(*schedsize); i++) {
-        if (compare_reservations(reservation, &(*sched)[i]) == 0) {
-            /* can't add overlapping reservations */
-            return 0;
-        }
+    if(bsearch(reservation, *sched, *schedsize, sizeof(struct Reservation*), compare_reservations)) {
+        /* can't add overlapping reservations */
+        return 0;
     }
+
     *sched = realloc(*sched, sizeof(struct Reservation)*((*schedsize)+1));
     (*sched)[*schedsize] = *reservation;
     (*schedsize)++;
