@@ -86,12 +86,14 @@ int readsched(FILE* fp, struct Reservation** sched) {
             fputs("Error reading data (schedule conflict)\n", stderr);
             return 0;
         }
+        free(reservation);
     }
 
     if (!(i == schedsize && schedsize == *schedlen)) {
         fputs("Error reading data (length mismatch)\n", stderr);
         return 0;
     }
+    free(schedlen);
 
     sched_modified = 0;
     /* Return length of array. */
