@@ -92,6 +92,7 @@ int main(int argc, char* argv[])
                     confirmquit = 1;
                 } else if (!sched_modified) {
                     endwin();
+                    free(partial);
                     return 1;
                 } else {
                     /* save and quit */
@@ -101,12 +102,14 @@ int main(int argc, char* argv[])
                     FILE* wschedfile = fopen(argv[2], "w");
                     if (!wschedfile) {
                         fprintf(stderr, "Error opening file '%s' for writing\n", argv[2]);
+                        free(partial);
                         return 1;
                     }
                     writesched(wschedfile, sched, schedlen);
                     fclose(wschedfile);
 
                     endwin();
+                    free(partial);
                     return 1;
                 }
             default :
@@ -128,6 +131,7 @@ int main(int argc, char* argv[])
                     inputhandler = inputhandler(rooms, roomslen, &sched, &schedlen, &partial, &list, display, dispheight, strncat(line, "\n", 2));
                     if (inputhandler == NULL) {
                         endwin();
+                        free(partial);
                         return 1;
                     }
                 } else if ( ch == KEY_DEL || ch == KEY_BACKSPACE ) {
@@ -146,6 +150,7 @@ int main(int argc, char* argv[])
     /* close curses lib, reset terminal */
     endwin();
 
+    free(partial);
     return 0;
 }
 

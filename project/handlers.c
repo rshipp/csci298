@@ -15,9 +15,11 @@ void* newreservation_handler(char** rooms, int roomslen, struct Reservation** sc
     if (!strptime(line, "%F %T\n", t)) {
         writeline(window, winheight, &d, "Enter a date and 24-hour time in the format: YYYY-MM-DD HH:MM:SS");
         writeline(window, winheight, &d, "Invalid timestamp. Try again.");
+        free(t);
         return newreservation_handler;
     }
     time_t time = mktime(t);
+    free(t);
 
     writelinef(window, winheight, &d, "Rooms available on %s", ctime(&time));
 
@@ -25,12 +27,15 @@ void* newreservation_handler(char** rooms, int roomslen, struct Reservation** sc
     int numavailable = rooms_available(rooms, roomslen, *sched, *schedlen, time, &available);
     if (!numavailable) {
         writeline(window, winheight, &d, "None");
+        free(available);
         return newreservation_handler;
     }
     int i;
     for (i=0; i<numavailable; i++) {
         writeline(window, winheight, &d, available[i]);
+        free(available[i]);
     }
+    free(available);
 
     writeline(window, winheight, &d, "");
     writeline(window, winheight, &d, "Choose a room.");
@@ -64,9 +69,11 @@ void* nr_start_handler(char** rooms, int roomslen, struct Reservation** sched, i
     if (!strptime(line, "%F %T\n", t)) {
         writeline(window, winheight, &d, "Enter a starting time in the format: YYYY-MM-DD HH:MM:SS");
         writeline(window, winheight, &d, "Invalid timestamp. Try again.");
+        free(t);
         return nr_start_handler;
     }
     time_t time = mktime(t);
+    free(t);
 
     (*partial)->start = time;
     writelinef(window, winheight, &d, "Reserving %s", (*partial)->room);
@@ -84,9 +91,11 @@ void* nr_end_handler(char** rooms, int roomslen, struct Reservation** sched, int
     if (!strptime(line, "%F %T\n", t)) {
         writeline(window, winheight, &d, "Enter an ending time (AFTER the starting time) in YYYY-MM-DD HH:MM:SS format.");
         writeline(window, winheight, &d, "Invalid timestamp. Try again.");
+        free(t);
         return nr_end_handler;
     }
     time_t time = mktime(t);
+    free(t);
     if (time <= (*partial)->start) {
         writeline(window, winheight, &d, "Enter an ending time (AFTER the starting time) in YYYY-MM-DD HH:MM:SS format.");
         writeline(window, winheight, &d, "Must be AFTER! Try again.");
@@ -127,6 +136,7 @@ void* dayview_handler(char** rooms, int roomslen, struct Reservation** sched, in
     struct tm* t = calloc(1, sizeof(struct tm));
     if (!t) {
         fputs("Error allocating memory\n", stderr);
+        free(t);
         return NULL;
     }
     if (!strptime(line, "%F\n", t)) {
@@ -135,6 +145,7 @@ void* dayview_handler(char** rooms, int roomslen, struct Reservation** sched, in
         return dayview_handler;
     }
     time_t time = mktime(t);
+    free(t);
 
     writelinef(window, winheight, &d, "Reservations on %s", line);
 
@@ -205,6 +216,7 @@ void* resview_handler(char** rooms, int roomslen, struct Reservation** sched, in
     writeline(window, winheight, &d, "enter 'd' and press Enter to delete this reservation, or");
     writeline(window, winheight, &d, "enter a date and 24-hour time in YYYY-MM-DD HH:MM:SS format to edit.");
 
+    free(*partial);
     *partial = list[index];
 
     return edit_handler;
@@ -227,9 +239,11 @@ void* edit_handler(char** rooms, int roomslen, struct Reservation** sched, int* 
         if (!strptime(line, "%F %T\n", t)) {
             writeline(window, winheight, &d, "Enter a date and 24-hour time in the format: YYYY-MM-DD HH:MM:SS");
             writeline(window, winheight, &d, "Invalid timestamp. Try again.");
+            free(t);
             return newreservation_handler;
         }
         time_t time = mktime(t);
+        free(t);
 
         writelinef(window, winheight, &d, "Rooms available on %s", ctime(&time));
 
