@@ -65,7 +65,7 @@ void* nr_start_handler(char** rooms, int roomslen, struct Reservation** sched, i
     int d = 0;
     cleardisplay(window);
 
-    struct tm* t = malloc(sizeof(struct tm));
+    struct tm* t = calloc(1, sizeof(struct tm));
     if (!strptime(line, "%F %T\n", t)) {
         writeline(window, winheight, &d, "Enter a starting time in the format: YYYY-MM-DD HH:MM:SS");
         writeline(window, winheight, &d, "Invalid timestamp. Try again.");
