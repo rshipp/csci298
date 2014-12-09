@@ -47,6 +47,7 @@ int main(int argc, char* argv[])
         if (!sched || !schedlen) {
             return 1;
         }
+        fclose(schedfile);
     } else {
         sched = malloc(sizeof(struct Reservation));
         if (!sched) {
@@ -54,7 +55,6 @@ int main(int argc, char* argv[])
             fputs("Error allocating memory\n", stderr);
         }
     }
-    fclose(schedfile);
 
     /* signal handling */
     install_handler(SIGUSR1);
