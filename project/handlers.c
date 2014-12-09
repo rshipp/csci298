@@ -238,8 +238,6 @@ void* resview_handler(char** rooms, int roomslen, struct Reservation** sched, in
     writeline(window, winheight, &d, "enter 'd' and press Enter to delete this reservation, or");
     writeline(window, winheight, &d, "enter a date and 24-hour time in YYYY-MM-DD HH:MM:SS format to edit.");
 
-    //free(*partial);
-    //*partial = calloc(1, sizeof(struct Reservation));
     memcpy(*partial, &(*list)[index], sizeof(struct Reservation));
 
     return edit_handler;
@@ -327,7 +325,6 @@ void* search_handler(char** rooms, int roomslen, struct Reservation** sched, int
     free(*list);
     *list = reservations;
 
-    //free(reservations);
     return resview_handler;
 }
 
