@@ -9,4 +9,4 @@ crr.tar.bz2: *.c *.h
 
 .PHONY: clean
 clean:
-	$(RM) crr *.o
+	$(RM) crr *.o *.tar.bz2
