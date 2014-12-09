@@ -46,10 +46,18 @@ struct Reservation* readreservation(FILE* fp) {
         return NULL;
     }
 
+    /* convert times from UTC */
+    r->start = timegm(gmtime(&r->start));
+    r->end = timegm(gmtime(&r->end));
+
     return r;
 }
 
 int writereservation(FILE* fp, struct Reservation r) {
+    /* convert times to UTC */
+    r.start = mktime(localtime(&r.start));
+    r.end = mktime(localtime(&r.end));
+
     if (fwrite(&r, sizeof(r), 1, fp) != 1) {
         fputs("Error writing data\n", stderr);
         return 0;
