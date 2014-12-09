@@ -76,7 +76,11 @@ int main(int argc, char* argv[])
         return 1;
         fputs("Error allocating memory\n", stderr);
     }
-    struct Reservation* list;
+    struct Reservation* list = calloc(1, sizeof(struct Reservation));
+    if (!list) {
+        return 1;
+        fputs("Error allocating memory\n", stderr);
+    }
     int confirmquit = 0;
 
     writeline(display, dispheight, &d, "Select an option:");
@@ -101,6 +105,7 @@ int main(int argc, char* argv[])
                 } else if (!sched_modified) {
                     endwin();
                     free(partial);
+                    free(list);
                     return 1;
                 } else {
                     /* save and quit */
@@ -111,6 +116,7 @@ int main(int argc, char* argv[])
                     if (!wschedfile) {
                         fprintf(stderr, "Error opening file '%s' for writing\n", argv[2]);
                         free(partial);
+                        free(list);
                         return 1;
                     }
                     writesched(wschedfile, sched, schedlen);
@@ -118,6 +124,7 @@ int main(int argc, char* argv[])
 
                     endwin();
                     free(partial);
+                    free(list);
                     return 1;
                 }
             default :
@@ -140,6 +147,7 @@ int main(int argc, char* argv[])
                     if (inputhandler == NULL) {
                         endwin();
                         free(partial);
+                        free(list);
                         return 1;
                     }
                 } else if ( ch == KEY_DEL || ch == KEY_BACKSPACE ) {
@@ -159,6 +167,7 @@ int main(int argc, char* argv[])
     endwin();
 
     free(partial);
+    free(list);
     return 0;
 }
 

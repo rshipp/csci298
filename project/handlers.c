@@ -184,6 +184,7 @@ void* dayview_handler(char** rooms, int roomslen, struct Reservation** sched, in
 
     writeline(window, winheight, &d, "");
     writeline(window, winheight, &d, "Choose a number to view or edit a reservation.");
+    free(*list);
     *list = reservations;
 
     free(t);
@@ -201,6 +202,7 @@ void* roomview_handler(char** rooms, int roomslen, struct Reservation** sched, i
     int numreservations = reservations_for_room(line, *sched, *schedlen, &reservations);
     if (!numreservations) {
         writeline(window, winheight, &d, "None");
+        free(reservations);
         return roomview_handler;
     }
     int i;
@@ -214,6 +216,7 @@ void* roomview_handler(char** rooms, int roomslen, struct Reservation** sched, i
 
     writeline(window, winheight, &d, "");
     writeline(window, winheight, &d, "Choose a number to view or edit a reservation.");
+    free(*list);
     *list = reservations;
 
     return resview_handler;
@@ -235,8 +238,9 @@ void* resview_handler(char** rooms, int roomslen, struct Reservation** sched, in
     writeline(window, winheight, &d, "enter 'd' and press Enter to delete this reservation, or");
     writeline(window, winheight, &d, "enter a date and 24-hour time in YYYY-MM-DD HH:MM:SS format to edit.");
 
-    free(*partial);
-    *partial = &(*list)[index];
+    //free(*partial);
+    //*partial = calloc(1, sizeof(struct Reservation));
+    memcpy(*partial, &(*list)[index], sizeof(struct Reservation));
 
     return edit_handler;
 }
@@ -320,6 +324,7 @@ void* search_handler(char** rooms, int roomslen, struct Reservation** sched, int
 
     writeline(window, winheight, &d, "");
     writeline(window, winheight, &d, "Choose a number to view or edit a reservation.");
+    free(*list);
     *list = reservations;
 
     //free(reservations);
