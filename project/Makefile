@@ -1,4 +1,4 @@
-CFLAGS=-g -D_GNU_SOURCE -std=c99 -lncurses -Wall
+CFLAGS=-g -D_GNU_SOURCE -std=c99 -lncurses
 
 crr: crrses.o handlers.o reservations.o rooms.o signals.o crr.o -lncurses
 
