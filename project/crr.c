@@ -5,6 +5,7 @@
 #include <ncurses.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include "crr.h"
 #include "crrses.h"
@@ -53,6 +54,11 @@ int main(int argc, char* argv[])
             fputs("Error allocating memory\n", stderr);
         }
     }
+    fclose(schedfile);
+
+    /* signal handling */
+    install_handler(SIGUSR1);
+    install_handler(SIGHUP);
 
     /* curses */
     initscr();
@@ -99,15 +105,46 @@ int main(int argc, char* argv[])
                 d = d % dispheight;
                 dispheight = size_display( display, edit );
 				if( sighup_received ) {
-					snprintf( buf, BUFSIZE, "Received SIGHUP %lu", (unsigned long)time(NULL) );
+					snprintf( buf, BUFSIZE, "Received SIGHUP, application reloading." );
 					mvwprintw( display, d++ + 2, 2, buf );
 					d = d % dispheight;
 					sighup_received = 0;
+                    /* read in data */
+                    schedfile = fopen(argv[2], "r");
+                    free(sched);
+                    schedlen = 0;
+                    if (schedfile) {
+                        schedlen = readsched(schedfile, &sched);
+                        if (!sched || !schedlen) {
+                            free(partial);
+                            free(list);
+                            return 1;
+                        }
+                    } else {
+                        sched = malloc(sizeof(struct Reservation));
+                        if (!sched) {
+                            free(partial);
+                            free(list);
+                            return 1;
+                            fputs("Error allocating memory\n", stderr);
+                        }
+                    }
+                    fclose(schedfile);
 				}
 				if( sigusr1_received ) {
-					snprintf( buf, BUFSIZE, "Received SIGUSR1 %lu", (unsigned long)time(NULL) );
+					snprintf( buf, BUFSIZE, "Received SIGUSR1, flushing to disk." );
 					mvwprintw( display, d++ + 2, 2, buf );
 					d = d % dispheight;
+                    /* save */
+                    schedfile = fopen(argv[2], "w");
+                    if (!schedfile) {
+                        fprintf(stderr, "Error opening file '%s' for writing\n", argv[2]);
+                        free(partial);
+                        free(list);
+                        return 1;
+                    }
+                    writesched(schedfile, sched, schedlen);
+                    fclose(schedfile);
 					sigusr1_received = 0;
 				}
 				wrefresh(display);
@@ -123,24 +160,22 @@ int main(int argc, char* argv[])
                     return 1;
                 } else {
                     /* save and quit */
-                    if (schedfile) {
-                        fclose(schedfile);
-                    }
-                    FILE* wschedfile = fopen(argv[2], "w");
-                    if (!wschedfile) {
+                   schedfile = fopen(argv[2], "w");
+                    if (!schedfile) {
                         fprintf(stderr, "Error opening file '%s' for writing\n", argv[2]);
                         free(partial);
                         free(list);
                         return 1;
                     }
-                    writesched(wschedfile, sched, schedlen);
-                    fclose(wschedfile);
+                    writesched(schedfile, sched, schedlen);
+                    fclose(schedfile);
 
                     endwin();
                     free(partial);
                     free(list);
                     return 1;
                 }
+                break;
             default :
                 if ( isprint(ch) ) {
                     confirmquit = 0;
