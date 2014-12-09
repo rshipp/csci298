@@ -47,6 +47,10 @@ int main(int argc, char* argv[])
         }
     } else {
         sched = malloc(sizeof(struct Reservation));
+        if (!sched) {
+            return 1;
+            fputs("Error allocating memory\n", stderr);
+        }
     }
 
     /* curses */
@@ -67,7 +71,11 @@ int main(int argc, char* argv[])
     char line[BUFSIZE];
     int ch;
     void* (*inputhandler)(char**, int, struct Reservation**, int*, struct Reservation**, struct Reservation**, WINDOW*, int, char*);
-    struct Reservation* partial = calloc(1, sizeof(struct Reservation*));
+    struct Reservation* partial = calloc(1, sizeof(struct Reservation));
+    if (!partial) {
+        return 1;
+        fputs("Error allocating memory\n", stderr);
+    }
     struct Reservation* list;
     int confirmquit = 0;
 
@@ -128,7 +136,7 @@ int main(int argc, char* argv[])
                     mvwprintw(edit, 0, 3, EDIT_TITLE);
                     wrefresh(edit);
                     /* Handle the input. */
-                    inputhandler = inputhandler(rooms, roomslen, &sched, &schedlen, &partial, &list, display, dispheight, strncat(line, "\n", 2));
+                    inputhandler = inputhandler(rooms, roomslen, &sched, &schedlen, &partial, &list, display, dispheight, strncat(line, "\n\0", 2));
                     if (inputhandler == NULL) {
                         endwin();
                         free(partial);
