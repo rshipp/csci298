@@ -3,7 +3,7 @@
 
 #include <time.h>
 
-/* Reservations */
+/* REQ3: Reservations */
 struct Reservation {
     char room[50];
     char description[128];

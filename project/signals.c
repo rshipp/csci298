@@ -9,7 +9,7 @@
 
 #include "signals.h"
 
-/* Stolen from charcell-signal-kip.c */
+/* REQ9: Stolen from charcell-signal-kip.c */
 int sigusr1_received = 0;
 int sighup_received = 0;
 void signal_catcher( int signum )

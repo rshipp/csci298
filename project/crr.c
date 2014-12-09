@@ -22,14 +22,14 @@ int main(int argc, char* argv[])
 {
     prctl( PR_SET_PTRACER, PR_SET_PTRACER_ANY, 0, 0, 0 );
     if (argc < 3) {
-        fputs("Not enough arguments\n", stderr);
+        fputs("Not enough arguments\n", stderr); /* REQ6 */
         return 1;
     }
 
-    /* Read in rooms data. */
+    /* REQ3: Read in rooms data. */
     FILE* roomsfile = fopen(argv[1], "r");
     if (!roomsfile) {
-        fprintf(stderr, "Error opening file '%s' for reading\n", argv[1]);
+        fprintf(stderr, "Error opening file '%s' for reading\n", argv[1]); /* REQ6 */
         return 1;
     }
     char** rooms;
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    /* Read in schedule data, if it exists. */
+    /* REQ3: Read in schedule data, if it exists. */
     FILE* schedfile = fopen(argv[2], "r");
     struct Reservation* sched;
     int schedlen = 0;
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
         sched = malloc(sizeof(struct Reservation));
         if (!sched) {
             return 1;
-            fputs("Error allocating memory\n", stderr);
+            fputs("Error allocating memory\n", stderr); /* REQ6 */
         }
     }
 
@@ -60,14 +60,14 @@ int main(int argc, char* argv[])
     install_handler(SIGUSR1);
     install_handler(SIGHUP);
 
-    /* curses */
+    /* REQ2: curses */
     initscr();
     noecho();
     cbreak();
     keypad(stdscr,TRUE);
     curs_set(FALSE);
 
-    /* set up initial windows */
+    /* REQ2: set up initial windows */
     WINDOW* display = newwin(1, 1, 0, 0 );
     WINDOW* edit = newwin(1,1, 0, 0 );
     int dispheight = size_display( display, edit );
@@ -81,12 +81,12 @@ int main(int argc, char* argv[])
     struct Reservation* partial = calloc(1, sizeof(struct Reservation));
     if (!partial) {
         return 1;
-        fputs("Error allocating memory\n", stderr);
+        fputs("Error allocating memory\n", stderr); /* REQ6 */
     }
     struct Reservation* list = calloc(1, sizeof(struct Reservation));
     if (!list) {
         return 1;
-        fputs("Error allocating memory\n", stderr);
+        fputs("Error allocating memory\n", stderr); /* REQ6 */
     }
     int confirmquit = 0;
 
@@ -99,13 +99,16 @@ int main(int argc, char* argv[])
 
     while((ch = getch())) {
         switch (ch) {
+            /* REQ2: window resizing */
             case KEY_RESIZE:
                 strncpy( buf, "KEY_RESIZE", BUFSIZE );
                 mvwprintw( display, d++ + 2, 2, buf );
                 d = d % dispheight;
                 dispheight = size_display( display, edit );
+                /* REQ9 */
 				if( sighup_received ) {
 					snprintf( buf, BUFSIZE, "Received SIGHUP, application reloading." );
+				    fputs( "Received SIGHUP, application reloading.\n", stderr );
 					mvwprintw( display, d++ + 2, 2, buf );
 					d = d % dispheight;
 					sighup_received = 0;
@@ -126,19 +129,21 @@ int main(int argc, char* argv[])
                             free(partial);
                             free(list);
                             return 1;
-                            fputs("Error allocating memory\n", stderr);
+                            fputs("Error allocating memory\n", stderr); /* REQ6 */
                         }
                     }
                     fclose(schedfile);
 				}
+                /* REQ9 */
 				if( sigusr1_received ) {
 					snprintf( buf, BUFSIZE, "Received SIGUSR1, flushing to disk." );
+					fputs( "Received SIGUSR1, flushing to disk.\n", stderr );
 					mvwprintw( display, d++ + 2, 2, buf );
 					d = d % dispheight;
                     /* save */
                     schedfile = fopen(argv[2], "w");
                     if (!schedfile) {
-                        fprintf(stderr, "Error opening file '%s' for writing\n", argv[2]);
+                        fprintf(stderr, "Error opening file '%s' for writing\n", argv[2]); /* REQ6 */
                         free(partial);
                         free(list);
                         return 1;
@@ -149,6 +154,7 @@ int main(int argc, char* argv[])
 				}
 				wrefresh(display);
                 break;
+            /* REQ10 */
             case KEY_ESC:
                 if (!confirmquit && sched_modified) {
                     writeline(display, dispheight, &d, "Press Esc again to save and quit.");
@@ -162,7 +168,7 @@ int main(int argc, char* argv[])
                     /* save and quit */
                    schedfile = fopen(argv[2], "w");
                     if (!schedfile) {
-                        fprintf(stderr, "Error opening file '%s' for writing\n", argv[2]);
+                        fprintf(stderr, "Error opening file '%s' for writing\n", argv[2]); /* REQ6 */
                         free(partial);
                         free(list);
                         return 1;
@@ -191,7 +197,7 @@ int main(int argc, char* argv[])
                     draw_borders(edit, HORZ2, VERT2, CORNER);
                     mvwprintw(edit, 0, 3, EDIT_TITLE);
                     wrefresh(edit);
-                    /* Handle the input. */
+                    /* REQ3: Handle the input. */
                     inputhandler = inputhandler(rooms, roomslen, &sched, &schedlen, &partial, &list, display, dispheight, strncat(line, "\n\0", 2));
                     if (inputhandler == NULL) {
                         endwin();

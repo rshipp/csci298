@@ -4,17 +4,19 @@
 #include "crr.h"
 #include "rooms.h"
 
+/* REQ3: reading rooms */
+
 int readrooms(FILE* fp, char*** rooms) {
     (*rooms) = malloc(sizeof(char*)*BUFSIZE);
     if (!(*rooms)) {
-        fputs("Error allocating memory\n", stderr);
+        fputs("Error allocating memory\n", stderr); /* REQ6 */
         return 0;
     }
     int n;
     for (n=0; n<BUFSIZE; n++) {
         (*rooms)[n] = malloc(sizeof(char)*MAXROOMLEN);
         if (!(*rooms)[n]) {
-            fputs("Error allocating memory\n", stderr);
+            fputs("Error allocating memory\n", stderr); /* REQ6 */
             return 0;
         }
     }
@@ -24,13 +26,13 @@ int readrooms(FILE* fp, char*** rooms) {
             r++;
             (*rooms) = realloc((*rooms), sizeof(char*)*BUFSIZE*r);
             if (!(*rooms)) {
-                fputs("Error allocating memory\n", stderr);
+                fputs("Error allocating memory\n", stderr); /* REQ6 */
                 return 0;
             }
             for (n=BUFSIZE*(r-1); n<BUFSIZE*r; n++) {
                 (*rooms)[n] = malloc(sizeof(char)*MAXROOMLEN);
                 if (!(*rooms)[n]) {
-                    fputs("Error allocating memory\n", stderr);
+                    fputs("Error allocating memory\n", stderr); /* REQ6 */
                     return 0;
                 }
             }

@@ -5,7 +5,7 @@
 #include "crr.h"
 #include "crrses.h"
 
-/* Stolen from charcell-resize.c */
+/* REQ2: Stolen from charcell-resize.c */
 void draw_borders(WINDOW * screen, char horiz, char vert, char corner)
 {
 	int x, y, i;

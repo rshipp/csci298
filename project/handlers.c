@@ -7,13 +7,15 @@
 #include "crrses.h"
 #include "handlers.h"
 
+/* REQ3: main application features / user interface elements */
+
 void* newreservation_handler(char** rooms, int roomslen, struct Reservation** sched, int* schedlen, struct Reservation** partial, struct Reservation** list, WINDOW* window, int winheight, char* line) {
     int d = 0;
     cleardisplay(window);
 
     struct tm* t = calloc(1, sizeof(struct tm));
     if (!t) {
-        fputs("Error allocating memory\n", stderr);
+        fputs("Error allocating memory\n", stderr); /* REQ6 */
         return NULL;
     }
     char* tr = strptime(line, "%F %T\n", t);
@@ -73,7 +75,7 @@ void* nr_start_handler(char** rooms, int roomslen, struct Reservation** sched, i
 
     struct tm* t = calloc(1, sizeof(struct tm));
     if (!t) {
-        fputs("Error allocating memory\n", stderr);
+        fputs("Error allocating memory\n", stderr); /* REQ6 */
         return NULL;
     }
     char* tr = strptime(line, "%F %T\n", t);
@@ -100,7 +102,7 @@ void* nr_end_handler(char** rooms, int roomslen, struct Reservation** sched, int
 
     struct tm* t = calloc(1, sizeof(struct tm));
     if (!t) {
-        fputs("Error allocating memory\n", stderr);
+        fputs("Error allocating memory\n", stderr); /* REQ6 */
         return NULL;
     }
     char* tr = strptime(line, "%F %T\n", t);
@@ -152,7 +154,7 @@ void* dayview_handler(char** rooms, int roomslen, struct Reservation** sched, in
 
     struct tm* t = calloc(1, sizeof(struct tm));
     if (!t) {
-        fputs("Error allocating memory\n", stderr);
+        fputs("Error allocating memory\n", stderr); /* REQ6 */
         return NULL;
     }
     char* tr = strptime(line, "%F\n", t);
@@ -258,7 +260,7 @@ void* edit_handler(char** rooms, int roomslen, struct Reservation** sched, int* 
 
         struct tm* t = calloc(1, sizeof(struct tm));
         if (!t) {
-            fputs("Error allocating memory\n", stderr);
+            fputs("Error allocating memory\n", stderr); /* REQ6 */
             return NULL;
         }
         char* tr = strptime(line, "%F %T\n", t);

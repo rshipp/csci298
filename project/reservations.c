@@ -7,6 +7,7 @@
 
 /* Reservations */
 
+/* REQ5 */
 int compare_reservations(const void* reservationx, const void* reservationy) {
     /* special handling for null reservations, to avoid epoch errors */
     if (strcmp(( (struct Reservation *) reservationx)->room, "") == 0) {
@@ -35,18 +36,19 @@ int compare_reservations(const void* reservationx, const void* reservationy) {
     }
 }
 
+/* REQ3: read/write reservations and schedules */
 struct Reservation* readreservation(FILE* fp) {
     struct Reservation* r = malloc(sizeof(struct Reservation));
     if (!r) {
-        fputs("Error allocating memory\n", stderr);
+        fputs("Error allocating memory\n", stderr); /* REQ6 */
         return NULL;
     }
     if (fread(r, sizeof(struct Reservation), 1, fp) != 1) {
-        fputs("Error reading data\n", stderr);
+        fputs("Error reading data\n", stderr); /* REQ6 */
         return NULL;
     }
 
-    /* convert times from UTC */
+    /* REQ11: convert times from UTC */
     r->start = timegm(gmtime(&r->start));
     r->end = timegm(gmtime(&r->end));
 
@@ -54,12 +56,12 @@ struct Reservation* readreservation(FILE* fp) {
 }
 
 int writereservation(FILE* fp, struct Reservation r) {
-    /* convert times to UTC */
+    /* REQ11: convert times to UTC */
     r.start = mktime(localtime(&r.start));
     r.end = mktime(localtime(&r.end));
 
     if (fwrite(&r, sizeof(r), 1, fp) != 1) {
-        fputs("Error writing data\n", stderr);
+        fputs("Error writing data\n", stderr); /* REQ6 */
         return 0;
     }
 
@@ -75,30 +77,30 @@ int readsched(FILE* fp, struct Reservation** sched) {
     *schedlen = 0;
     struct Reservation* reservation;
     if (fread(&schedsize, sizeof(int), 1, fp) != 1) {
-        fputs("Error reading data\n", stderr);
+        fputs("Error reading data\n", stderr); /* REQ6 */
         return 0;
     }
     (*sched) = malloc(schedsize*sizeof(struct Reservation));
     if (!(*sched)) {
-        fputs("Error allocating memory\n", stderr);
+        fputs("Error allocating memory\n", stderr); /* REQ6 */
         return 0;
     }
     int i;
     for (i=0; i<=schedsize-1; i++) {
         reservation = readreservation(fp);
         if (!reservation) {
-            fputs("Error reading data\n", stderr);
+            fputs("Error reading data\n", stderr); /* REQ6 */
             return 0;
         }
         if (!reservation_add(sched, schedlen, reservation)) {
-            fputs("Error reading data (schedule conflict)\n", stderr);
+            fputs("Error reading data (schedule conflict)\n", stderr); /* REQ6 */
             return 0;
         }
         free(reservation);
     }
 
     if (!(i == schedsize && schedsize == *schedlen)) {
-        fputs("Error reading data (length mismatch)\n", stderr);
+        fputs("Error reading data (length mismatch)\n", stderr); /* REQ6 */
         return 0;
     }
     free(schedlen);
@@ -110,7 +112,7 @@ int readsched(FILE* fp, struct Reservation** sched) {
 
 int writesched(FILE* fp, struct Reservation* sched, int schedsize) {
     if (fwrite(&schedsize, sizeof(int), 1, fp) != 1) {
-        fputs("Error writing data\n", stderr);
+        fputs("Error writing data\n", stderr); /* REQ6 */
         return 0;
     }
     int i;
@@ -143,7 +145,7 @@ int room_available(char* room, struct Reservation* sched, int schedlen, time_t t
 int rooms_available(char** rooms, int roomslen, struct Reservation* sched, int schedlen, time_t time, char*** available) {
     *available = malloc(sizeof(char*)*roomslen);
     if (!(*available)) {
-        fputs("Error allocating memory\n", stderr);
+        fputs("Error allocating memory\n", stderr); /* REQ6 */
         return 0;
     }
     int i, n = 0;
@@ -151,7 +153,7 @@ int rooms_available(char** rooms, int roomslen, struct Reservation* sched, int s
         if (room_available(rooms[i], sched, schedlen, time)) {
             (*available)[n] = malloc(MAXROOMLEN);
             if (!(*available)[n]) {
-                fputs("Error allocating memory\n", stderr);
+                fputs("Error allocating memory\n", stderr); /* REQ6 */
                 return 0;
             }
             strncpy((*available)[n], rooms[i], MAXROOMLEN);
@@ -166,7 +168,7 @@ int rooms_available(char** rooms, int roomslen, struct Reservation* sched, int s
 int reservations_for_room(char* room, struct Reservation* sched, int schedlen, struct Reservation** reservations) {
     *reservations = malloc(sizeof(struct Reservation)*schedlen);
     if (!(*reservations)) {
-        fputs("Error allocating memory\n", stderr);
+        fputs("Error allocating memory\n", stderr); /* REQ6 */
         return 0;
     }
     int i, n = 0;
@@ -183,7 +185,7 @@ int reservations_for_room(char* room, struct Reservation* sched, int schedlen, s
 int reservations_for_day(time_t time, struct Reservation* sched, int schedlen, struct Reservation** reservations) {
     *reservations = malloc(sizeof(struct Reservation)*schedlen);
     if (!(*reservations)) {
-        fputs("Error allocating memory\n", stderr);
+        fputs("Error allocating memory\n", stderr); /* REQ6 */
         return 0;
     }
 
@@ -203,7 +205,7 @@ int reservations_for_day(time_t time, struct Reservation* sched, int schedlen, s
 int reservations_search(char* needle, struct Reservation* sched, int schedlen, struct Reservation** reservations) {
     *reservations = malloc(sizeof(struct Reservation)*schedlen);
     if (!(*reservations)) {
-        fputs("Error allocating memory\n", stderr);
+        fputs("Error allocating memory\n", stderr); /* REQ6 */
         return 0;
     }
 
@@ -219,14 +221,17 @@ int reservations_search(char* needle, struct Reservation* sched, int schedlen, s
 }
 
 int reservation_add(struct Reservation** sched, int* schedsize, struct Reservation* reservation) {
+    /* REQ5 */
     if (bsearch(reservation, *sched, *schedsize, sizeof(struct Reservation), compare_reservations)) {
-        /* can't add overlapping reservations */
+        /* REQ7/REQ8: can't add overlapping reservations */
         return 0;
     }
 
+    /* REQ4: realloc */
     *sched = realloc(*sched, sizeof(struct Reservation)*((*schedsize)+1));
     (*sched)[*schedsize] = *reservation;
     (*schedsize)++;
+    /* REQ5 */
     qsort(*sched, *schedsize, sizeof(struct Reservation), compare_reservations);
 
     sched_modified = 1;
@@ -240,6 +245,7 @@ void reservation_delete(struct Reservation** sched, int* schedsize, struct Reser
                 (*sched)[n-1] = (*sched)[n];
             }
             (*schedsize)--;
+            /* REQ4: realloc */
             *sched = realloc(*sched, sizeof(struct Reservation)*((*schedsize)));
             break;
         }
