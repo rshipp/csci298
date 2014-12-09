@@ -11,6 +11,7 @@
 #include "handlers.h"
 #include "reservations.h"
 #include "rooms.h"
+#include "signals.h"
 
 int sched_modified = 0;
 
@@ -97,6 +98,19 @@ int main(int argc, char* argv[])
                 mvwprintw( display, d++ + 2, 2, buf );
                 d = d % dispheight;
                 dispheight = size_display( display, edit );
+				if( sighup_received ) {
+					snprintf( buf, BUFSIZE, "Received SIGHUP %lu", (unsigned long)time(NULL) );
+					mvwprintw( display, d++ + 2, 2, buf );
+					d = d % dispheight;
+					sighup_received = 0;
+				}
+				if( sigusr1_received ) {
+					snprintf( buf, BUFSIZE, "Received SIGUSR1 %lu", (unsigned long)time(NULL) );
+					mvwprintw( display, d++ + 2, 2, buf );
+					d = d % dispheight;
+					sigusr1_received = 0;
+				}
+				wrefresh(display);
                 break;
             case KEY_ESC:
                 if (!confirmquit && sched_modified) {

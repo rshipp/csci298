@@ -1,6 +1,6 @@
 CFLAGS=-g -D_GNU_SOURCE -std=c99 -lncurses -Wall
 
-crr: crrses.o handlers.o reservations.o rooms.o crr.o -lncurses
+crr: crrses.o handlers.o reservations.o rooms.o signals.o crr.o -lncurses
 
 tar: crr.tar.bz2
 
