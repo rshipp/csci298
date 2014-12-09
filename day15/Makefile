@@ -1,3 +1,4 @@
+CFLAGS+= -lncurses
 
 SOLIBS += libattachable_debugger.so
 
@@ -6,7 +7,10 @@ LD = ${CC}
 
 ${SOLIBS}: CFLAGS += -fPIC
 
-all: ${SOLIBS} 
+all: ${SOLIBS} kip
+
+kip: charcell-signal-kip.c charcell-utils.c
+	$(CC) $(CFLAGS) -o kip charcell-signal-kip.c charcell-utils.c
 
 libattachable_debugger.so: attachable_debugger.o libctor.o
 
